@@ -1,0 +1,1314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PROMPTERGO Booth Log — IBC2026</title>
+<link rel="manifest" href="./manifest.webmanifest">
+<meta name="theme-color" content="#1c1e1b" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Booth Log">
+<link rel="apple-touch-icon" href="./icon-180.png">
+<link rel="icon" href="./icon-192.png">
+<style>
+:root{
+  --bg:#f7f7f5; --panel:#ffffff; --panel-2:#f0efec; --line:#d8d6d0;
+  --ink:#1a1a18; --ink-2:#5f5d57; --ink-3:#8b8880;
+  --tally:#d81f26; --tally-ink:#ffffff; --signal:#c47a00; --go:#1f7a4d;
+  --field:#ffffff; --field-line:#c9c7c1; --chip:#eceae5; --chip-on:#1a1a18; --chip-on-ink:#ffffff;
+  --shadow:0 1px 0 rgba(0,0,0,.06);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#121311; --panel:#1c1e1b; --panel-2:#242724; --line:#33362f;
+    --ink:#eceae4; --ink-2:#a5a49c; --ink-3:#75746c;
+    --tally:#ff3b30; --tally-ink:#12130f; --signal:#e8a33d; --go:#4cc38a;
+    --field:#101210; --field-line:#3c3f38; --chip:#282b26; --chip-on:#eceae4; --chip-on-ink:#121311;
+    --shadow:none;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#121311; --panel:#1c1e1b; --panel-2:#242724; --line:#33362f;
+  --ink:#eceae4; --ink-2:#a5a49c; --ink-3:#75746c;
+  --tally:#ff3b30; --tally-ink:#12130f; --signal:#e8a33d; --go:#4cc38a;
+  --field:#101210; --field-line:#3c3f38; --chip:#282b26; --chip-on:#eceae4; --chip-on-ink:#121311;
+  --shadow:none;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg); color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  font-size:16px; line-height:1.45; -webkit-text-size-adjust:100%;
+}
+.wrap{max-width:720px;margin:0 auto;padding:0 0 96px}
+header{position:sticky;top:0;z-index:20;background:var(--panel);border-bottom:1px solid var(--line);padding:10px 14px 0}
+.hrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.mark{display:flex;align-items:center;gap:8px;font-weight:650;letter-spacing:-.01em}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--go);flex:none}
+.dot.pending{background:var(--tally);animation:blink 1.4s steps(1,end) infinite}
+.dot.off{background:var(--ink-3)}
+@keyframes blink{50%{opacity:.25}}
+@media (prefers-reduced-motion:reduce){.dot.pending{animation:none}}
+.counts{margin-left:auto;display:flex;gap:14px;font-variant-numeric:tabular-nums}
+.count b{display:block;font-size:19px;line-height:1.1;font-weight:650}
+.count span{font-size:11px;color:var(--ink-3)}
+.count.flag b{color:var(--signal)}
+nav{display:flex;gap:2px;margin-top:10px;overflow-x:auto}
+nav button{appearance:none;background:none;border:0;border-bottom:2px solid transparent;color:var(--ink-2);font:inherit;font-size:15px;padding:9px 12px;cursor:pointer;white-space:nowrap}
+nav button[aria-current="true"]{color:var(--ink);border-bottom-color:var(--tally);font-weight:600}
+nav button:focus-visible{outline:2px solid var(--tally);outline-offset:-2px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px;margin:12px 14px;box-shadow:var(--shadow)}
+.card.edit{border-color:var(--signal);border-width:2px}
+#engWrap{border-left:3px solid var(--signal);background:var(--panel-2);border-radius:0 8px 8px 0;padding:12px 13px;margin:-2px 0 13px}
+#engWrap label{color:var(--ink)}
+#engWrap textarea{min-height:74px}
+h2{font-size:15px;margin:0 0 4px;font-weight:650}
+.sub{color:var(--ink-3);font-size:13px;margin:0 0 12px}
+label{display:block;font-size:12.5px;color:var(--ink-2);margin:0 0 5px}
+.cn{color:var(--ink-3)}
+input[type=text],input[type=email],input[type=tel],textarea,select{width:100%;background:var(--field);color:var(--ink);border:1px solid var(--field-line);border-radius:8px;padding:11px 12px;font:inherit;font-size:16px}
+textarea{min-height:80px;resize:vertical;line-height:1.4}
+input:focus,textarea:focus,select:focus{outline:2px solid var(--tally);outline-offset:1px;border-color:transparent}
+.f{margin-bottom:13px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:420px){.two{grid-template-columns:1fr}}
+.chips{display:flex;flex-wrap:wrap;gap:7px}
+.chip{appearance:none;font:inherit;font-size:14px;background:var(--chip);color:var(--ink);border:1px solid transparent;border-radius:999px;padding:9px 13px;cursor:pointer;line-height:1.15}
+.chip[aria-pressed="true"]{background:var(--chip-on);color:var(--chip-on-ink);font-weight:600}
+.chip:focus-visible{outline:2px solid var(--tally);outline-offset:2px}
+.temp{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.temp .chip{text-align:center;padding:13px 6px;border-radius:9px}
+.temp .chip[aria-pressed="true"][data-v="hot"]{background:var(--tally);color:var(--tally-ink)}
+.temp .chip[aria-pressed="true"][data-v="warm"]{background:var(--signal);color:#12130f}
+.check{display:flex;gap:10px;align-items:flex-start;background:var(--panel-2);border-radius:8px;padding:11px 12px;margin-bottom:11px;cursor:pointer}
+.check input{width:22px;height:22px;flex:none;margin:0;accent-color:var(--tally)}
+.check span{font-size:14px;line-height:1.35}
+.btn{appearance:none;font:inherit;font-size:15px;font-weight:600;border-radius:9px;padding:12px 16px;border:1px solid var(--line);background:var(--panel-2);color:var(--ink);cursor:pointer}
+.btn:focus-visible{outline:2px solid var(--tally);outline-offset:2px}
+.btn.primary{background:var(--tally);color:var(--tally-ink);border-color:transparent;width:100%;padding:16px;font-size:17px}
+.btn.big{flex:1;padding:15px 10px;font-size:15px}
+.btn:disabled{opacity:.5;cursor:default}
+.btn.danger{color:var(--tally)}
+.btn.armed{background:var(--tally);color:var(--tally-ink);border-color:transparent}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap}
+.tiny{font-size:12px;color:var(--ink-3)}
+.hidden{display:none !important}
+.grab{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+#scanBox{position:relative;background:#000;border-radius:10px;overflow:hidden;margin-bottom:10px}
+#scanVid{width:100%;display:block;max-height:56vh;object-fit:cover}
+#scanBox .hint{position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,.62);color:#fff;font-size:13px;padding:9px 12px;text-align:center}
+#scanBox .frame{position:absolute;left:12%;right:12%;top:20%;bottom:20%;border:2px solid rgba(255,255,255,.85);border-radius:10px}
+.lead{border-bottom:1px solid var(--line);padding:12px 0;cursor:pointer}
+.lead:last-child{border-bottom:0}
+.lead h3{margin:0;font-size:15.5px;font-weight:650;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.pill{font-size:11px;font-weight:700;padding:2px 7px;border-radius:4px;background:var(--chip);color:var(--ink-2)}
+.pill.hot{background:var(--tally);color:var(--tally-ink)}
+.pill.eng{background:var(--signal);color:#12130f}
+.lead .meta{font-size:13px;color:var(--ink-2);margin-top:2px}
+.lead .q{font-size:13.5px;color:var(--ink-2);margin-top:6px;border-left:2px solid var(--line);padding-left:9px}
+.lead img{max-width:100%;border-radius:8px;margin-top:8px;display:block}
+.empty{color:var(--ink-3);font-size:14px;padding:18px 0;text-align:center}
+.filters{display:flex;gap:7px;margin-bottom:10px;flex-wrap:wrap}
+pre.rep{white-space:pre-wrap;word-break:break-word;background:var(--field);border:1px solid var(--field-line);border-radius:8px;padding:12px;font-size:13px;line-height:1.5;max-height:50vh;overflow:auto;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"PingFang SC",monospace}
+.stat{display:flex;justify-content:space-between;border-bottom:1px solid var(--line);padding:7px 0;font-size:14px}
+.stat:last-child{border-bottom:0}
+.stat b{font-variant-numeric:tabular-nums}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:22px;z-index:60;background:var(--chip-on);color:var(--chip-on-ink);padding:11px 18px;border-radius:999px;font-size:14px;font-weight:600;box-shadow:0 6px 24px rgba(0,0,0,.3);max-width:88%;text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="hrow">
+    <div class="mark"><span class="dot off" id="syncdot"></span><span id="brandname">PROMPTERGO</span></div>
+    <div class="counts">
+      <div class="count"><b id="cToday">0</b><span>today 今日</span></div>
+      <div class="count"><b id="cAll">0</b><span>total 总计</span></div>
+      <div class="count flag"><b id="cEng">0</b><span>for engineer</span></div>
+    </div>
+  </div>
+  <nav>
+    <button data-tab="capture" aria-current="true">＋ New visitor</button>
+    <button data-tab="leads">Log 记录</button>
+    <button data-tab="report">Daily report</button>
+    <button data-tab="setup">Setup</button>
+  </nav>
+</header>
+
+<section id="tab-capture">
+  <div class="card" id="captureCard">
+    <h2 id="capTitle">Who came by <span class="cn">来访客户</span></h2>
+    <p class="sub" id="capSub">Grab their details in five seconds, then fill the rest in after they walk away.</p>
+
+    <div class="grab">
+      <button class="btn big" id="scanBtn">▣ Scan badge 扫工牌</button>
+      <button class="btn big" id="cardBtn">📇 Photo of card 拍名片</button>
+    </div>
+
+    <div id="scanBox" class="hidden">
+      <video id="scanVid" playsinline muted></video>
+      <div class="frame"></div>
+      <div class="hint" id="scanHint">Hold the badge QR code inside the frame</div>
+    </div>
+    <button class="btn wide hidden" id="scanStop" style="width:100%;margin-bottom:10px">Stop scanning</button>
+    <input type="file" accept="image/*" capture="environment" id="scanFile" class="hidden">
+
+    <input type="file" accept="image/*" capture="environment" id="cardFile" class="hidden">
+    <div id="cardWrap" class="hidden" style="margin-bottom:12px">
+      <img id="cardPrev" alt="Business card" style="max-height:190px;border-radius:8px;display:block">
+      <div class="btnrow" style="margin-top:8px">
+        <button class="btn hidden" id="ocrBtn" style="padding:9px 13px;font-size:14px">✨ Read this card 识别名片</button>
+        <button class="btn" id="cardClear" style="padding:9px 13px;font-size:14px">Remove</button>
+      </div>
+    </div>
+    <p class="tiny hidden" id="badgeNote" style="margin:-4px 0 12px"></p>
+
+    <div class="two">
+      <div class="f"><label for="f_name">Name <span class="cn">姓名</span></label><input type="text" id="f_name" autocomplete="off"></div>
+      <div class="f"><label for="f_company">Company <span class="cn">公司</span></label><input type="text" id="f_company" autocomplete="off"></div>
+    </div>
+    <div class="two">
+      <div class="f"><label for="f_country">Country <span class="cn">国家</span></label><input type="text" id="f_country" autocomplete="off"></div>
+      <div class="f"><label for="f_role">Job title <span class="cn">职位</span></label><input type="text" id="f_role" autocomplete="off"></div>
+    </div>
+    <div class="two">
+      <div class="f"><label for="f_email">Email</label><input type="email" id="f_email" autocomplete="off" autocapitalize="off"></div>
+      <div class="f"><label for="f_phone">Phone / WhatsApp / WeChat</label><input type="tel" id="f_phone" autocomplete="off"></div>
+    </div>
+
+    <div class="f">
+      <label>What kind of company <span class="cn">客户类型</span></label>
+      <div class="chips" id="c_type"></div>
+      <input type="text" id="f_typeOther" class="hidden" placeholder="Which kind exactly? 具体是什么类型" style="margin-top:9px">
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Interests &amp; questions <span class="cn">兴趣与问题</span></h2>
+
+    <div class="f">
+      <label>Products they looked at <span class="cn">感兴趣的型号</span></label>
+      <div class="chips" id="c_prod"></div>
+    </div>
+
+    <div class="f">
+      <label>What they asked about <span class="cn">问了什么</span> — tap all that apply</label>
+      <div class="chips" id="c_topic"></div>
+    </div>
+
+    <div class="f">
+      <label for="f_q">Their exact questions &amp; anything you promised <span class="cn">原话记录</span></label>
+      <textarea id="f_q" placeholder="Use the microphone key on your keyboard — talking is faster than typing."></textarea>
+    </div>
+
+    <label class="check"><input type="checkbox" id="f_eng"><span><b>We could not answer this — send to the engineer</b><br><span class="cn tiny">答不上来，需要工程师回答</span></span></label>
+
+    <div class="f hidden" id="engWrap">
+      <label for="f_engQ">Exactly what could we not answer? <span class="cn">具体是哪个问题</span></label>
+      <textarea id="f_engQ" placeholder="Write it the way they asked it. This goes straight to the top of tonight's report."></textarea>
+      <p class="tiny" style="margin:6px 0 0">This one lands in the engineer's list — his answer comes back before the hall opens.</p>
+    </div>
+
+    <div class="f">
+      <label>How serious are they <span class="cn">意向程度</span></label>
+      <div class="temp chips" id="c_temp"></div>
+    </div>
+
+    <div class="f">
+      <label for="f_next">Agreed next step <span class="cn">后续动作</span></label>
+      <input type="text" id="f_next" placeholder="Send price list / demo Friday 14:00 / sample unit">
+    </div>
+
+    <div class="f" id="staffWrap">
+      <label>Who spoke with them <span class="cn">谁接待的</span></label>
+      <div class="chips" id="c_staff"></div>
+    </div>
+
+    <label class="check"><input type="checkbox" id="f_consent" checked><span>Happy for us to email them 同意联系<br><span class="tiny cn">If they say no, untick — do not email them afterwards.</span></span></label>
+    <label class="check"><input type="checkbox" id="f_media"><span>We also took photos / video on the phone 另拍了照片或视频</span></label>
+
+    <button class="btn primary" id="saveBtn">Save visitor 保存</button>
+    <button class="btn wide hidden" id="cancelEdit" style="width:100%;margin-top:8px">Cancel editing</button>
+    <p class="tiny" id="savedBy" style="text-align:center;margin:9px 0 0"></p>
+  </div>
+</section>
+
+<section id="tab-leads" class="hidden">
+  <div class="card">
+    <div class="filters">
+      <button class="chip" data-filter="all" aria-pressed="true">All</button>
+      <button class="chip" data-filter="today" aria-pressed="false">Today</button>
+      <button class="chip" data-filter="hot" aria-pressed="false">Hot 🔥</button>
+      <button class="chip" data-filter="eng" aria-pressed="false">For engineer</button>
+      <button class="chip" data-filter="todo" aria-pressed="false">To complete 待补充</button>
+    </div>
+    <input type="text" id="searchBox" placeholder="Search name, company, question…" style="margin-bottom:8px">
+    <div id="leadList"></div>
+  </div>
+</section>
+
+<section id="tab-report" class="hidden">
+  <div class="card">
+    <h2>Report for <span id="repDayName">today</span></h2>
+    <p class="sub">Copy this into WeChat or email it to the boss at the end of each day.</p>
+    <div class="f">
+      <label for="repDay">Which day</label>
+      <select id="repDay"></select>
+    </div>
+    <div id="repStats"></div>
+  </div>
+  <div class="card">
+    <pre class="rep" id="repText">—</pre>
+    <div class="btnrow" style="margin-top:10px">
+      <button class="btn" id="copyRep">Copy text 复制</button>
+      <button class="btn" id="dlPdf">Summary (PDF)</button>
+      <button class="btn" id="dlXlsx">Visitors (Excel)</button>
+      <button class="btn hidden" id="aiRep">✨ Write it up with Claude</button>
+      <button class="btn hidden" id="plainRep">Back to plain report</button>
+    </div>
+    <p class="tiny" style="margin:10px 0 0">The Excel file has three sheets: every visitor, the open questions for the engineer, and the day’s totals. The PDF is the page above, ready to attach to an email.</p>
+  </div>
+</section>
+
+<section id="tab-setup" class="hidden">
+  <div class="card">
+    <h2>Set this up before day 1</h2>
+    <p class="sub">Takes two minutes. Do it tonight, not in the hall.</p>
+    <div class="f"><label for="s_brand">Company / stand name</label><input type="text" id="s_brand" placeholder="PROMPTERGO · Hall 11 · Stand 11.C29"></div>
+    <div class="f"><label for="s_staff">Who is on the stand — one name per line <span class="cn">接待人员</span></label><textarea id="s_staff" style="min-height:70px"></textarea></div>
+    <div class="f">
+      <label for="s_prod">Your products — one per line <span class="cn">产品清单，每行一个</span></label>
+      <textarea id="s_prod" style="min-height:150px"></textarea>
+    </div>
+    <div class="f">
+      <label for="s_topic">Question topics — one per line</label>
+      <textarea id="s_topic" style="min-height:130px"></textarea>
+    </div>
+    <div class="f">
+      <label for="s_type">Visitor types — one per line</label>
+      <textarea id="s_type" style="min-height:130px"></textarea>
+    </div>
+    <button class="btn primary" id="saveSet">Save setup</button>
+  </div>
+  <div class="card">
+    <h2>Shared Google Sheet <span class="cn">共享表格</span></h2>
+    <p class="sub">Paste these once on each phone. They stay on the device and are never part of the published code, so a public page never exposes them.</p>
+    <div class="f"><label for="s_shurl">Web app URL</label><input type="text" id="s_shurl" placeholder="https://script.google.com/macros/s/…/exec" autocapitalize="off" autocomplete="off"></div>
+    <div class="f"><label for="s_shtok">Shared token</label><input type="text" id="s_shtok" placeholder="the token you set in the script" autocapitalize="off" autocomplete="off"></div>
+    <div class="btnrow">
+      <button class="btn" id="shTest">Test connection</button>
+      <button class="btn" id="shNow">Sync now</button>
+    </div>
+    <p class="tiny" id="shState" style="margin-top:11px">Not connected — the app is storing everything on this device only.</p>
+  </div>
+
+  <div class="card">
+    <h2>Working as two people</h2>
+    <p class="sub" style="margin-bottom:0">If you are both signed in to Claude on the same company account, records sync between your phones automatically — the dot next to the stand name turns green when the shared store is connected. If it stays grey on one phone, that phone is keeping its own copy: export from both at the end of each day and keep one phone as the main recorder.</p>
+  </div>
+  <div class="card">
+    <h2>Your data</h2>
+    <p class="sub">Records live on this device and sync to the shared store when there is signal. Export every evening — don't rely on one copy.</p>
+    <div class="btnrow">
+      <button class="btn" id="dlAll">Export everything (Excel)</button>
+      <button class="btn" id="dlJson">Backup file (JSON)</button>
+    </div>
+    <p class="tiny" style="margin-top:12px">Visitors are in the EU, so only keep what you need, tell them why you're taking it, and delete anyone who asks. The consent tick on each record is your evidence.</p>
+  </div>
+</section>
+
+</div>
+<script>
+(function(){
+"use strict";
+
+var LS_L='boothlog_leads_v1', LS_S='boothlog_set_v1', LS_P='boothlog_photo_';
+var db=null, sampleFn=null, canSeeImages=false;
+
+var DEF_PROD=[
+ "PTZ Teleprompter (PTZ-18)",
+ "Studio Teleprompter FLEX-21",
+ "Studio Teleprompter LS-21",
+ "Portable Teleprompter (PT-18EB)",
+ "Speech Teleprompter SP-22EB-AS",
+ "Speech Teleprompter SP-22EB-HS",
+ "Teleprompter Box (CueBose)",
+ "Prompting software / IP system",
+ "Controllers (jog wheel, pedal, remote)",
+ "Talent monitor & mounts",
+ "PTZ camera Vision 4K 12X + V-Joy+",
+ "Tripods & stands"
+];
+var DEF_TOPIC=[
+ "Price",
+ "Distributor terms 经销条款",
+ "Exclusivity 独家",
+ "MOQ",
+ "Lead time 交期",
+ "Camera compatibility",
+ "VISCA / NDI / protocols",
+ "MOS / newsroom rundown",
+ "IP system & redundancy",
+ "Prompting software",
+ "Beam-splitter glass & optics",
+ "Screen brightness",
+ "310° PTZ rotation",
+ "Motor noise",
+ "Customisation / OEM",
+ "CE certification",
+ "Warranty & spare parts",
+ "Service & support in Europe",
+ "Shipping / duties",
+ "vs Autoscript / CueScript / Autocue",
+ "Asked for a live demo"
+];
+var DEF_TYPE=[
+ "Distributor 经销商",
+ "Dealer / reseller",
+ "Rental house",
+ "Broadcaster",
+ "Production company",
+ "System integrator",
+ "House of worship",
+ "Corporate / AV",
+ "Government / conference",
+ "Education",
+ "Creator / freelancer",
+ "Press",
+ "Competitor",
+ "Other"
+];
+function readJSON(k,f){try{var v=localStorage.getItem(k);return v?JSON.parse(v):f;}catch(e){return f;}}
+function writeJSON(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true;}catch(e){toast("Device storage full — export now");return false;}}
+
+var leads=readJSON(LS_L,[]);
+var settings=Object.assign({brand:"PROMPTERGO · IBC2026",staffList:[],products:DEF_PROD,topics:DEF_TOPIC,types:DEF_TYPE,sheetUrl:'',sheetToken:'',lastPull:0},readJSON(LS_S,{}));
+if(!Array.isArray(settings.staffList))settings.staffList=settings.staff?[settings.staff]:[];
+
+var $=function(s){return document.querySelector(s);};
+function live(){return leads.filter(function(L){return !L.deleted;});}
+function el(t,c,txt){var e=document.createElement(t);if(c)e.className=c;if(txt!=null)e.textContent=txt;return e;}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,8);}
+function dayOf(iso){return (iso||"").slice(0,10);}
+function todayStr(){var d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
+function fmtDay(d){try{return new Date(d+"T12:00:00").toLocaleDateString(undefined,{weekday:"short",day:"numeric",month:"short"});}catch(e){return d;}}
+function fmtTime(iso){try{return new Date(iso).toLocaleTimeString(undefined,{hour:"2-digit",minute:"2-digit"});}catch(e){return "";}}
+var toastT;
+function toast(m){var old=$(".toast");if(old)old.remove();var t=el("div","toast",m);document.body.appendChild(t);clearTimeout(toastT);toastT=setTimeout(function(){t.remove();},2600);}
+
+/* ---------- chips ---------- */
+function buildChips(host,items,multi,vals){
+  host.innerHTML="";
+  items.forEach(function(it){
+    var b=el("button","chip",it);b.type="button";b.dataset.v=it;
+    b.setAttribute("aria-pressed", vals.indexOf(it)>-1?"true":"false");
+    b.addEventListener("click",function(){
+      var on=b.getAttribute("aria-pressed")==="true";
+      if(!multi)Array.prototype.forEach.call(host.children,function(c){c.setAttribute("aria-pressed","false");});
+      b.setAttribute("aria-pressed",on?"false":"true");
+    });
+    host.appendChild(b);
+  });
+}
+function syncOther(keep){
+  var on=chipVals($("#c_type")).some(function(t){return /^Other$/i.test(t);});
+  $("#f_typeOther").classList.toggle("hidden",!on);
+  if(on&&!keep)setTimeout(function(){$("#f_typeOther").focus();},0);
+  if(!on)$("#f_typeOther").value="";
+}
+function chipVals(host){return Array.prototype.filter.call(host.children,function(c){return c.getAttribute("aria-pressed")==="true";}).map(function(c){return c.dataset.v;});}
+function setChips(host,vals){Array.prototype.forEach.call(host.children,function(c){c.setAttribute("aria-pressed",(vals||[]).indexOf(c.dataset.v)>-1?"true":"false");});}
+function clearChips(host){setChips(host,[]);}
+
+function renderChipGroups(){
+  buildChips($("#c_type"),settings.types,true,[]);
+  buildChips($("#c_prod"),settings.products,true,[]);
+  buildChips($("#c_topic"),settings.topics,true,[]);
+  buildChips($("#c_temp"),["hot","warm","cold"],false,[]);
+  var labels={hot:"🔥 Hot 有意向",warm:"Warm 观望",cold:"Cold 路过"};
+  Array.prototype.forEach.call($("#c_temp").children,function(c){c.textContent=labels[c.dataset.v];});
+  buildChips($("#c_staff"),settings.staffList,false,[]);
+  syncOther(true);
+  $("#staffWrap").classList.toggle("hidden",settings.staffList.length<2);
+  if(settings.staffList.length===1)setChips($("#c_staff"),[settings.staffList[0]]);
+}
+
+$("#c_type").addEventListener("click",function(){syncOther();});
+function syncEng(){
+  var on=$("#f_eng").checked;
+  $("#engWrap").classList.toggle("hidden",!on);
+  if(on){
+    if(!$("#f_engQ").value.trim()&&$("#f_q").value.trim())$("#f_engQ").value=$("#f_q").value.trim();
+    setTimeout(function(){$("#f_engQ").focus();},0);
+  }
+}
+$("#f_eng").addEventListener("change",syncEng);
+
+/* ---------- badge QR ---------- */
+var stream=null, rafId=null, detector=null, jsqrReady=null;
+
+function loadJsQR(){
+  if(jsqrReady)return jsqrReady;
+  jsqrReady=new Promise(function(res,rej){
+    if(window.jsQR)return res(window.jsQR);
+    var s=document.createElement("script");
+    s.src="https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.js";
+    s.onload=function(){window.jsQR?res(window.jsQR):rej();};
+    s.onerror=rej;
+    document.head.appendChild(s);
+  });
+  return jsqrReady;
+}
+
+$("#scanBtn").addEventListener("click",startScan);
+$("#scanStop").addEventListener("click",stopScan);
+
+function startScan(){
+  $("#scanBox").classList.remove("hidden");
+  $("#scanStop").classList.remove("hidden");
+  $("#scanHint").textContent="Starting camera…";
+  if(window.BarcodeDetector){
+    try{detector=new window.BarcodeDetector({formats:["qr_code"]});}catch(e){detector=null;}
+  }
+  navigator.mediaDevices&&navigator.mediaDevices.getUserMedia
+    ? navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:"environment"}}}).then(function(st){
+        stream=st;var v=$("#scanVid");v.srcObject=st;v.play();
+        $("#scanHint").textContent="Hold the badge QR code inside the frame";
+        if(detector)loopDetector(); else loadJsQR().then(loopJsQR,noScanner);
+      },noScanner)
+    : noScanner();
+}
+function noScanner(){
+  stopScan();
+  $("#scanHint").textContent="";
+  toast("Camera not available here — take a photo of the badge instead");
+  $("#scanFile").click();
+}
+$("#scanFile").addEventListener("change",function(e){
+  var f=e.target.files&&e.target.files[0];if(!f)return;
+  imgFromFile(f,1200).then(function(o){
+    decodeCanvas(o.canvas).then(function(txt){
+      if(txt)gotBadge(txt); else toast("No QR code found in that photo");
+    });
+  });
+  e.target.value="";
+});
+function loopDetector(){
+  var v=$("#scanVid");
+  var tick=function(){
+    if(!stream)return;
+    detector.detect(v).then(function(codes){
+      if(codes&&codes.length){gotBadge(codes[0].rawValue);return;}
+      rafId=requestAnimationFrame(tick);
+    }).catch(function(){rafId=requestAnimationFrame(tick);});
+  };
+  tick();
+}
+function loopJsQR(){
+  var v=$("#scanVid"), cv=document.createElement("canvas"), ctx=cv.getContext("2d",{willReadFrequently:true});
+  var tick=function(){
+    if(!stream)return;
+    if(v.videoWidth){
+      var w=Math.min(640,v.videoWidth), s=w/v.videoWidth;
+      cv.width=w;cv.height=Math.round(v.videoHeight*s);
+      ctx.drawImage(v,0,0,cv.width,cv.height);
+      try{
+        var d=ctx.getImageData(0,0,cv.width,cv.height);
+        var r=window.jsQR(d.data,cv.width,cv.height,{inversionAttempts:"attemptBoth"});
+        if(r&&r.data){gotBadge(r.data);return;}
+      }catch(e){}
+    }
+    rafId=requestAnimationFrame(tick);
+  };
+  tick();
+}
+function decodeCanvas(cv){
+  var ctx=cv.getContext("2d");
+  if(window.BarcodeDetector){
+    try{
+      return new window.BarcodeDetector({formats:["qr_code"]}).detect(cv)
+        .then(function(c){return c&&c.length?c[0].rawValue:null;})
+        .catch(function(){return jsqrCanvas(cv,ctx);});
+    }catch(e){}
+  }
+  return jsqrCanvas(cv,ctx);
+}
+function jsqrCanvas(cv,ctx){
+  return loadJsQR().then(function(){
+    var d=ctx.getImageData(0,0,cv.width,cv.height);
+    var r=window.jsQR(d.data,cv.width,cv.height,{inversionAttempts:"attemptBoth"});
+    return r&&r.data?r.data:null;
+  }).catch(function(){return null;});
+}
+function stopScan(){
+  if(rafId)cancelAnimationFrame(rafId);rafId=null;
+  if(stream){stream.getTracks().forEach(function(t){t.stop();});stream=null;}
+  $("#scanVid").srcObject=null;
+  $("#scanBox").classList.add("hidden");
+  $("#scanStop").classList.add("hidden");
+}
+
+var pendingBadge="";
+function gotBadge(text){
+  stopScan();
+  var p=parseBadge(text);
+  var filled=[];
+  [["name","f_name"],["company","f_company"],["role","f_role"],["email","f_email"],["phone","f_phone"],["country","f_country"]].forEach(function(m){
+    if(p[m[0]]&&!$("#"+m[1]).value){$("#"+m[1]).value=p[m[0]];filled.push(m[0]);}
+  });
+  pendingBadge=p.badgeId||"";
+  var n=$("#badgeNote");
+  if(filled.length){
+    n.textContent="Badge read — filled in "+filled.join(", ")+". Check it is right.";
+    toast("Badge read ✓");
+  }else{
+    n.textContent="Badge code saved: "+text.slice(0,60)+(text.length>60?"…":"")+" — this show's badge only holds an ID, so type the details or photograph their card.";
+    toast("Badge ID saved — no contact details inside");
+  }
+  n.classList.remove("hidden");
+}
+function parseBadge(t){
+  var out={badgeId:t}, s=(t||"").trim();
+  function grab(re){var m=s.match(re);return m?m[1].trim():"";}
+  if(/BEGIN:VCARD/i.test(s)){
+    out.badgeId="";
+    out.name=grab(/(?:^|\n)FN[^:\n]*:([^\n\r]*)/i);
+    if(!out.name){var n=grab(/(?:^|\n)N[^:\n]*:([^\n\r]*)/i);if(n){var p=n.split(";");out.name=((p[1]||"")+" "+(p[0]||"")).trim();}}
+    out.company=(grab(/(?:^|\n)ORG[^:\n]*:([^\n\r]*)/i)||"").split(";")[0];
+    out.role=grab(/(?:^|\n)TITLE[^:\n]*:([^\n\r]*)/i);
+    out.email=grab(/(?:^|\n)EMAIL[^:\n]*:([^\n\r]*)/i);
+    out.phone=grab(/(?:^|\n)TEL[^:\n]*:([^\n\r]*)/i);
+    return out;
+  }
+  if(/^MECARD:/i.test(s)){
+    out.badgeId="";
+    function f(k){var m=s.match(new RegExp("(?:^|;)"+k+":([^;]*)","i"));return m?m[1].trim():"";}
+    out.name=f("N").split(",").reverse().join(" ").trim();
+    out.company=f("ORG");out.email=f("EMAIL");out.phone=f("TEL");
+    return out;
+  }
+  if(/^[\[{]/.test(s)){
+    try{
+      var j=JSON.parse(s); if(j&&typeof j==="object"){
+        out.badgeId=j.id||j.badgeId||j.registrationId||"";
+        out.name=j.name||[j.firstName,j.lastName].filter(Boolean).join(" ")||"";
+        out.company=j.company||j.organisation||j.organization||j.org||"";
+        out.role=j.title||j.jobTitle||j.role||"";
+        out.email=j.email||"";out.phone=j.phone||j.mobile||j.tel||"";out.country=j.country||"";
+        return out;
+      }
+    }catch(e){}
+  }
+  if(/^https?:\/\//i.test(s)){
+    try{
+      var u=new URL(s), q=u.searchParams, any=false;
+      var map={name:["name","fullname","fn"],company:["company","org","organisation","organization"],role:["title","jobtitle","role"],email:["email","mail"],phone:["phone","tel","mobile"],country:["country"]};
+      Object.keys(map).forEach(function(k){
+        map[k].forEach(function(p){var v=q.get(p);if(v&&!out[k]){out[k]=v;any=true;}});
+      });
+      if(any)out.badgeId=q.get("id")||"";
+      return out;
+    }catch(e){}
+  }
+  return out;
+}
+
+/* ---------- card photo + OCR ---------- */
+var pendingPhoto=null, pendingBlob=null;
+function imgFromFile(f,max){
+  return new Promise(function(res,rej){
+    var img=new Image(), url=URL.createObjectURL(f);
+    img.onload=function(){
+      var s=Math.min(1,max/Math.max(img.width,img.height));
+      var cv=document.createElement("canvas");
+      cv.width=Math.max(1,Math.round(img.width*s));cv.height=Math.max(1,Math.round(img.height*s));
+      cv.getContext("2d").drawImage(img,0,0,cv.width,cv.height);
+      URL.revokeObjectURL(url);res({canvas:cv});
+    };
+    img.onerror=function(){URL.revokeObjectURL(url);rej();};
+    img.src=url;
+  });
+}
+$("#cardBtn").addEventListener("click",function(){$("#cardFile").click();});
+$("#cardClear").addEventListener("click",clearCard);
+function clearCard(){
+  pendingPhoto=null;pendingBlob=null;
+  $("#cardWrap").classList.add("hidden");$("#cardFile").value="";
+}
+$("#cardFile").addEventListener("change",function(e){
+  var f=e.target.files&&e.target.files[0];if(!f)return;
+  imgFromFile(f,1100).then(function(o){
+    pendingPhoto=o.canvas.toDataURL("image/jpeg",0.62);
+    o.canvas.toBlob(function(b){pendingBlob=b;},"image/jpeg",0.8);
+    $("#cardPrev").src=pendingPhoto;
+    $("#cardWrap").classList.remove("hidden");
+    $("#ocrBtn").classList.toggle("hidden",!canSeeImages);
+  },function(){toast("Could not read that image");});
+});
+$("#ocrBtn").addEventListener("click",function(){
+  if(!sampleFn||!pendingBlob){toast("Nothing to read yet");return;}
+  var b=$("#ocrBtn");b.disabled=true;b.textContent="Reading…";
+  sampleFn.json('The image is a business card handed over at a broadcast trade show. Transcribe it. Reply with only a JSON object with the keys name, company, role, email, phone, country, website. Copy the text exactly as printed, keeping Chinese, Japanese or Korean characters as they are. Use an empty string for anything not on the card. Do not guess.',{images:[pendingBlob],modelTier:"default"})
+   .then(function(d){
+      var filled=[];
+      [["name","f_name"],["company","f_company"],["role","f_role"],["email","f_email"],["phone","f_phone"],["country","f_country"]].forEach(function(m){
+        var v=d&&d[m[0]];if(v&&String(v).trim()&&!$("#"+m[1]).value){$("#"+m[1]).value=String(v).trim();filled.push(m[0]);}
+      });
+      b.disabled=false;b.textContent="✨ Read this card 识别名片";
+      toast(filled.length?("Filled in "+filled.join(", ")+" — check it"):"Nothing new found on the card");
+   })
+   .catch(function(e){
+      b.disabled=false;b.textContent="✨ Read this card 识别名片";
+      toast(e&&e.code==="not_granted"?"Card reading needs your permission":"Could not read the card — type it in");
+   });
+});
+function savePhoto(id,data){
+  if(!data)return;
+  try{localStorage.setItem(LS_P+id,data);}catch(e){toast("Photo not saved on this device — storage full");}
+  if(db)db.doc("photos/"+id).set({d:data}).catch(function(){});
+}
+function loadPhoto(id,cb){
+  var local=null;try{local=localStorage.getItem(LS_P+id);}catch(e){}
+  if(local)return cb(local);
+  if(db)db.doc("photos/"+id).get().then(function(s){var d=s.exists&&s.data();cb(d&&d.d||null);}).catch(function(){cb(null);});
+  else cb(null);
+}
+
+/* ---------- save / edit ---------- */
+var editingId=null;
+function typeArray(){
+  var v=chipVals($("#c_type")), out=[];
+  v.forEach(function(t){
+    if(/^Other$/i.test(t)){var o=$("#f_typeOther").value.trim();out.push(o?("Other: "+o):"Other");}
+    else out.push(t);
+  });
+  return out;
+}
+function typeValue(){return typeArray().join(" · ");}
+$("#saveBtn").addEventListener("click",function(){
+  var name=$("#f_name").value.trim(), company=$("#f_company").value.trim();
+  if(!editingId&&!name&&!company&&!pendingPhoto&&!pendingBadge&&!$("#f_q").value.trim()){toast("Add a name, a badge scan, a card photo or a question first");return;}
+  if($("#f_eng").checked&&!$("#f_engQ").value.trim()&&!$("#f_q").value.trim()){
+    toast("Write down the question you could not answer");$("#f_engQ").focus();return;
+  }
+  if(chipVals($("#c_type")).some(function(t){return /^Other$/i.test(t);})&&!$("#f_typeOther").value.trim()){
+    toast("Say what kind of company 请写明具体类型");$("#f_typeOther").focus();return;
+  }
+  var body={
+    name:name, company:company, country:$("#f_country").value.trim(), role:$("#f_role").value.trim(),
+    email:$("#f_email").value.trim(), phone:$("#f_phone").value.trim(),
+    type:typeValue(), types:typeArray(), products:chipVals($("#c_prod")), topics:chipVals($("#c_topic")),
+    questions:$("#f_q").value.trim(), needEngineer:$("#f_eng").checked, engQuestion:($("#f_eng").checked?$("#f_engQ").value.trim():""),
+    temp:(chipVals($("#c_temp"))[0]||"warm"), next:$("#f_next").value.trim(),
+    staff:(chipVals($("#c_staff"))[0]||settings.staffList[0]||""),
+    consent:$("#f_consent").checked, media:$("#f_media").checked,
+    updated:Date.now()
+  };
+  var L;
+  if(editingId){
+    L=leads.filter(function(x){return x.id===editingId;})[0];
+    if(!L){editingId=null;return;}
+    Object.assign(L,body);
+    if(pendingBadge)L.badgeId=pendingBadge;
+    if(pendingPhoto)L.hasCard=true;
+  }else{
+    var now=new Date().toISOString();
+    L=Object.assign({id:uid(),ts:now,day:dayOf(now),badgeId:pendingBadge,hasCard:!!pendingPhoto},body);
+    leads.push(L);
+  }
+  writeJSON(LS_L,leads);
+  if(pendingPhoto)savePhoto(L.id,pendingPhoto);
+  if(db)db.doc("leads/"+L.id).set(L).catch(function(){});
+  L.dirty=1;
+  if(pendingPhoto)L.cardPending=1;
+  writeJSON(LS_L,leads);
+  shSync();
+  var wasEdit=!!editingId;
+  resetForm();refresh();
+  toast(wasEdit?"Updated":("Saved · "+live().filter(function(x){return x.day===todayStr();}).length+" today"));
+  if(wasEdit)show("leads"); else window.scrollTo({top:0,behavior:"smooth"});
+});
+$("#cancelEdit").addEventListener("click",function(){resetForm();show("leads");});
+
+function resetForm(){
+  editingId=null;pendingBadge="";
+  ["f_name","f_company","f_country","f_role","f_email","f_phone","f_q","f_next"].forEach(function(i){$("#"+i).value="";});
+  $("#f_eng").checked=false;$("#f_media").checked=false;$("#f_consent").checked=true;
+  $("#f_engQ").value="";$("#engWrap").classList.add("hidden");
+  [$("#c_type"),$("#c_prod"),$("#c_topic"),$("#c_temp")].forEach(clearChips);
+  $("#f_typeOther").value="";$("#f_typeOther").classList.add("hidden");
+  if(settings.staffList.length===1)setChips($("#c_staff"),[settings.staffList[0]]);else clearChips($("#c_staff"));
+  clearCard();stopScan();
+  $("#badgeNote").classList.add("hidden");$("#badgeNote").textContent="";
+  $("#capTitle").innerHTML='Who came by <span class="cn">来访客户</span>';
+  $("#capSub").textContent="Grab their details in five seconds, then fill the rest in after they walk away.";
+  $("#saveBtn").textContent="Save visitor 保存";
+  $("#cancelEdit").classList.add("hidden");
+  $("#captureCard").classList.remove("edit");
+}
+function startEdit(L){
+  resetForm();editingId=L.id;
+  $("#f_name").value=L.name||"";$("#f_company").value=L.company||"";$("#f_country").value=L.country||"";
+  $("#f_role").value=L.role||"";$("#f_email").value=L.email||"";$("#f_phone").value=L.phone||"";
+  $("#f_q").value=L.questions||"";$("#f_next").value=L.next||"";
+  $("#f_eng").checked=!!L.needEngineer;$("#f_engQ").value=L.engQuestion||"";$("#engWrap").classList.toggle("hidden",!L.needEngineer);
+  $("#f_media").checked=!!L.media;$("#f_consent").checked=L.consent!==false;
+  var tys=(L.types&&L.types.length)?L.types.slice():(L.type?L.type.split(" · "):[]);
+  var oth=tys.filter(function(t){return /^Other/i.test(t);})[0];
+  setChips($("#c_type"),tys.map(function(t){return /^Other/i.test(t)?"Other":t;}));
+  if(oth){$("#f_typeOther").value=oth.replace(/^Other:?\s*/i,"");}
+  syncOther(true);
+  setChips($("#c_prod"),L.products||[]);setChips($("#c_topic"),L.topics||[]);
+  setChips($("#c_temp"),[L.temp||"warm"]);setChips($("#c_staff"),[L.staff]);
+  $("#capTitle").textContent="Finishing off "+(L.name||L.company||"this record");
+  $("#capSub").textContent="Saved "+fmtDay(L.day)+" at "+fmtTime(L.ts)+". Add whatever you didn't have time for.";
+  $("#saveBtn").textContent="Update 更新";
+  $("#cancelEdit").classList.remove("hidden");
+  $("#captureCard").classList.add("edit");
+  show("capture");
+}
+
+/* ---------- log ---------- */
+var filter="all";
+Array.prototype.forEach.call(document.querySelectorAll("[data-filter]"),function(b){
+  b.addEventListener("click",function(){
+    Array.prototype.forEach.call(document.querySelectorAll("[data-filter]"),function(x){x.setAttribute("aria-pressed","false");});
+    b.setAttribute("aria-pressed","true");filter=b.dataset.filter;renderLeads();
+  });
+});
+$("#searchBox").addEventListener("input",renderLeads);
+function incomplete(L){return !(L.products||[]).length&&!L.questions;}
+
+function renderLeads(){
+  var host=$("#leadList");host.innerHTML="";
+  var q=$("#searchBox").value.trim().toLowerCase();
+  var list=live().slice().sort(function(a,b){return b.ts<a.ts?-1:1;}).filter(function(L){
+    if(filter==="today"&&L.day!==todayStr())return false;
+    if(filter==="hot"&&L.temp!=="hot")return false;
+    if(filter==="eng"&&!L.needEngineer)return false;
+    if(filter==="todo"&&!incomplete(L))return false;
+    if(q){var blob=[L.name,L.company,L.country,L.questions,(L.products||[]).join(" "),(L.topics||[]).join(" "),L.type,L.staff].join(" ").toLowerCase();if(blob.indexOf(q)<0)return false;}
+    return true;
+  });
+  if(!list.length){host.appendChild(el("div","empty","Nothing here yet."));return;}
+  list.forEach(function(L){
+    var d=el("div","lead");
+    var h=el("h3");h.appendChild(document.createTextNode(L.name||L.company||"(no name)"));
+    if(L.temp==="hot")h.appendChild(el("span","pill hot","HOT"));
+    if(L.needEngineer)h.appendChild(el("span","pill eng","ENGINEER"));
+    if(incomplete(L))h.appendChild(el("span","pill","TO COMPLETE"));
+    if(L.hasCard)h.appendChild(el("span","pill","CARD"));
+    d.appendChild(h);
+    d.appendChild(el("div","meta",[L.company,L.country,L.type].filter(Boolean).join(" · ")+"  ·  "+fmtDay(L.day)+" "+fmtTime(L.ts)+(L.staff?"  ·  "+L.staff:"")));
+    if((L.products||[]).length)d.appendChild(el("div","meta","→ "+L.products.join(", ")));
+    if(L.questions)d.appendChild(el("div","q",L.questions));
+    var open=false;
+    d.addEventListener("click",function(){
+      if(open)return;open=true;
+      var det=el("div","meta");
+      [["Email",L.email],["Phone",L.phone],["Role",L.role],["For the engineer",L.engQuestion],["Asked about",(L.topics||[]).join(", ")],["Next step",L.next],["Badge ID",L.badgeId],["Consent to contact",L.consent===false?"NO — do not email":"yes"],["Own photos/video",L.media?"yes":""]].forEach(function(p){
+        if(p[1])det.appendChild(el("div",null,p[0]+": "+p[1]));
+      });
+      d.appendChild(det);
+      if(L.hasCard)loadPhoto(L.id,function(src){if(src){var i=new Image();i.src=src;i.alt="Business card";d.appendChild(i);}});
+      var row=el("div","btnrow");row.style.marginTop="10px";
+      var ed=el("button","btn","Open / finish 编辑");ed.style.fontSize="13px";ed.style.padding="8px 12px";
+      ed.addEventListener("click",function(ev){ev.stopPropagation();startEdit(L);});
+      var del=el("button","btn danger","Delete");del.style.fontSize="13px";del.style.padding="8px 12px";
+      var armed=false,armT=null;
+      del.addEventListener("click",function(ev){
+        ev.stopPropagation();ev.preventDefault();
+        if(!armed){
+          armed=true;del.textContent="Tap again to delete";del.classList.add("armed");
+          armT=setTimeout(function(){armed=false;del.textContent="Delete";del.classList.remove("armed");},4000);
+          return;
+        }
+        clearTimeout(armT);
+        L.deleted=1;L.updated=Date.now();L.dirty=1;
+        writeJSON(LS_L,leads);
+        try{localStorage.removeItem(LS_P+L.id);}catch(e){}
+        try{if(db){db.doc("leads/"+L.id).set(L).catch(function(){});db.doc("photos/"+L.id).delete().catch(function(){});}}catch(e){}
+        shSync();refresh();renderLeads();
+        toast("Deleted");
+      });
+      row.appendChild(ed);row.appendChild(del);d.appendChild(row);
+    });
+    host.appendChild(d);
+  });
+}
+
+/* ---------- report ---------- */
+function tally(arr){var m={};arr.forEach(function(k){if(k)m[k]=(m[k]||0)+1;});
+  return Object.keys(m).sort(function(a,b){return m[b]-m[a];}).map(function(k){return k+" "+m[k];});}
+function dayList(){var s={};live().forEach(function(L){s[L.day]=1;});var d=Object.keys(s).sort();if(d.indexOf(todayStr())<0)d.push(todayStr());return d;}
+function fillDaySelect(){
+  var sel=$("#repDay"),cur=sel.value;sel.innerHTML="";
+  dayList().forEach(function(d){var o=el("option",null,fmtDay(d)+(d===todayStr()?" (today)":""));o.value=d;sel.appendChild(o);});
+  sel.value=cur&&dayList().indexOf(cur)>-1?cur:todayStr();
+}
+$("#repDay").addEventListener("change",renderReport);
+
+function buildReport(day){
+  var d=live().filter(function(L){return L.day===day;});
+  var eng=d.filter(function(L){return L.needEngineer;});
+  var hot=d.filter(function(L){return L.temp==="hot";});
+  var dist=d.filter(function(L){return /Distributor|Dealer/i.test(L.type||"");});
+  var lines=[];
+  lines.push((settings.brand||"PROMPTERGO")+" — IBC2026 · RAI Amsterdam · "+fmtDay(day));
+  lines.push("Stand team: "+(settings.staffList.join(", ")||"—"));
+  lines.push("");
+  lines.push("今日到访 "+d.length+" 组  ·  累计 "+live().length+" 组");
+  lines.push("Visitors today: "+d.length+" (total "+live().length+")");
+  lines.push("Hot 有意向: "+hot.length+"  ·  Distributors/dealers 经销商: "+dist.length+"  ·  Needs your answer 待回答: "+eng.length);
+  lines.push("");
+  var pr=tally(d.reduce(function(a,L){return a.concat(L.products||[]);},[]));
+  if(pr.length){lines.push("产品兴趣 Product interest");lines.push("  "+pr.join("  ·  "));lines.push("");}
+  var tp=tally(d.reduce(function(a,L){return a.concat(L.topics||[]);},[]));
+  if(tp.length){lines.push("问题分布 What they asked about");lines.push("  "+tp.join("  ·  "));lines.push("");}
+  var co=tally(d.map(function(L){return L.country;}));
+  if(co.length){lines.push("国家 Countries");lines.push("  "+co.join("  ·  "));lines.push("");}
+  var ty=tally(d.reduce(function(a,L){return a.concat((L.types&&L.types.length)?L.types:(L.type?[L.type]:[]));},[]));
+  if(ty.length){lines.push("客户类型 Visitor types");lines.push("  "+ty.join("  ·  "));lines.push("");}
+  if(eng.length){
+    lines.push("──────────────────────────────");
+    lines.push("需要您回答的问题 QUESTIONS FOR YOU — please reply tonight");
+    eng.forEach(function(L,i){
+      lines.push((i+1)+". "+[L.company,L.name,L.country].filter(Boolean).join(" / "));
+      if((L.products||[]).length)lines.push("   re: "+L.products.join(", "));
+      lines.push("   Q: "+(L.engQuestion||L.questions||"(topics: "+(L.topics||[]).join(", ")+")"));
+      if(L.engQuestion&&L.questions&&L.questions!==L.engQuestion)lines.push("   context: "+L.questions);
+    });
+    lines.push("");
+  }
+  if(hot.length){
+    lines.push("──────────────────────────────");
+    lines.push("重点客户 HOT LEADS");
+    hot.forEach(function(L,i){
+      lines.push((i+1)+". "+[L.company,L.name,L.country,L.type].filter(Boolean).join(" / "));
+      if(L.email||L.phone)lines.push("   "+[L.email,L.phone].filter(Boolean).join("  ·  "));
+      if((L.products||[]).length)lines.push("   interested in: "+L.products.join(", "));
+      if(L.questions)lines.push("   asked: "+L.questions);
+      if(L.next)lines.push("   next step: "+L.next);
+    });
+    lines.push("");
+  }
+  var rest=d.filter(function(L){return L.temp!=="hot";});
+  if(rest.length){
+    lines.push("──────────────────────────────");
+    lines.push("其他到访 OTHER VISITORS");
+    rest.forEach(function(L){
+      lines.push("· "+[L.company||L.name,L.country,L.type].filter(Boolean).join(" / ")+((L.products||[]).length?" — "+L.products.join(", "):"")+(L.questions?" — "+L.questions:""));
+    });
+  }
+  return lines.join("\n");
+}
+function renderReport(){
+  var day=$("#repDay").value||todayStr();
+  $("#repDayName").textContent=fmtDay(day);
+  var d=live().filter(function(L){return L.day===day;});
+  var s=$("#repStats");s.innerHTML="";
+  [["Visitors logged 到访",d.length],
+   ["Hot leads 有意向",d.filter(function(L){return L.temp==="hot";}).length],
+   ["Distributors / dealers 经销商",d.filter(function(L){return /Distributor|Dealer/i.test(L.type||"");}).length],
+   ["Open questions for the engineer 待回答",d.filter(function(L){return L.needEngineer;}).length],
+   ["Cards photographed 名片",d.filter(function(L){return L.hasCard;}).length],
+   ["Still to complete 待补充",d.filter(incomplete).length],
+   ["Contactable (consent given)",d.filter(function(L){return L.consent!==false&&(L.email||L.phone);}).length]
+  ].forEach(function(p){var r=el("div","stat");r.appendChild(el("span",null,p[0]));r.appendChild(el("b",null,String(p[1])));s.appendChild(r);});
+  $("#repText").textContent=buildReport(day);
+  $("#plainRep").classList.add("hidden");
+}
+$("#plainRep").addEventListener("click",renderReport);
+$("#copyRep").addEventListener("click",function(){
+  var t=$("#repText").textContent;
+  if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(function(){toast("Copied");},function(){legacyCopy(t);});
+  else legacyCopy(t);
+});
+function legacyCopy(t){var a=document.createElement("textarea");a.value=t;document.body.appendChild(a);a.select();try{document.execCommand("copy");toast("Copied");}catch(e){toast("Select the text and copy");}a.remove();}
+
+/* ---------- files: excel + pdf ---------- */
+var FONT='"PingFang SC","Microsoft YaHei","Hiragino Sans GB",-apple-system,"Helvetica Neue",Arial,sans-serif';
+var LIB_XLSX="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js";
+var LIB_PDF="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js";
+
+function loadLib(src,name){
+  return new Promise(function(res,rej){
+    if(window[name])return res(window[name]);
+    var sc=document.createElement("script");sc.src=src;
+    sc.onload=function(){window[name]?res(window[name]):rej({code:"load"});};
+    sc.onerror=function(){rej({code:"net"});};
+    document.head.appendChild(sc);
+  });
+}
+
+var XL_COLS=["Date","Time","Name","Company","Country","Job title","Email","Phone","Visitor type","Products","Asked about","Their questions","Needs engineer","Question for engineer","Interest","Next step","Consent","Card photo","Own photos/video","Badge ID","Spoke with"];
+function xlRow(L){
+  return [L.day,fmtTime(L.ts),L.name||"",L.company||"",L.country||"",L.role||"",L.email||"",L.phone||"",L.type||"",
+    (L.products||[]).join(", "),(L.topics||[]).join(", "),L.questions||"",
+    L.needEngineer?"YES":"",L.engQuestion||"",L.temp||"",L.next||"",L.consent===false?"NO":"yes",L.hasCard?"yes":"",L.media?"yes":"",L.badgeId||"",L.staff||""];
+}
+function buildWorkbook(rows,label){
+  var X=window.XLSX, wb=X.utils.book_new();
+  var ws=X.utils.aoa_to_sheet([XL_COLS].concat(rows.map(xlRow)));
+  ws["!cols"]=[{wch:11},{wch:7},{wch:18},{wch:26},{wch:12},{wch:18},{wch:28},{wch:20},{wch:22},{wch:34},{wch:34},{wch:60},{wch:9},{wch:55},{wch:8},{wch:26},{wch:8},{wch:9},{wch:9},{wch:16},{wch:12}];
+  ws["!freeze"]={xSplit:0,ySplit:1};
+  X.utils.book_append_sheet(wb,ws,"Visitors");
+
+  var eng=rows.filter(function(L){return L.needEngineer;});
+  var qa=[["#","Date","Company","Name","Country","Product","Question we could not answer","Full conversation note","Engineer's answer 工程师回复","Answered? 已回复","Replied to customer 已回复客户"]];
+  eng.forEach(function(L,i){qa.push([i+1,L.day,L.company||"",L.name||"",L.country||"",(L.products||[]).join(", "),L.engQuestion||L.questions||(L.topics||[]).join(", "),L.questions||"","","",""]);});
+  var ws2=X.utils.aoa_to_sheet(qa);
+  ws2["!cols"]=[{wch:5},{wch:11},{wch:26},{wch:18},{wch:12},{wch:30},{wch:60},{wch:50},{wch:60},{wch:14},{wch:20}];
+  X.utils.book_append_sheet(wb,ws2,"Questions for engineer");
+
+  function count(f){return rows.filter(f).length;}
+  function group(vals){var m={};vals.forEach(function(v){if(v)m[v]=(m[v]||0)+1;});
+    return Object.keys(m).sort(function(a,b){return m[b]-m[a];}).map(function(k){return [k,m[k]];});}
+  var sum=[[(settings.brand||"PROMPTERGO")],["IBC2026 · RAI Amsterdam"],[label],[],
+    ["Visitors logged 到访",rows.length],
+    ["Hot leads 有意向",count(function(L){return L.temp==="hot";})],
+    ["Distributors / dealers 经销商",count(function(L){return /Distributor|Dealer/i.test(L.type||"");})],
+    ["Open questions for the engineer 待回答",eng.length],
+    ["Cards photographed 名片",count(function(L){return L.hasCard;})],
+    ["Contactable (consent given)",count(function(L){return L.consent!==false&&(L.email||L.phone);})],
+    [],["Product interest 产品兴趣",""]];
+  group(rows.reduce(function(a,L){return a.concat(L.products||[]);},[])).forEach(function(r){sum.push(r);});
+  sum.push([],["What they asked about 问题分布",""]);
+  group(rows.reduce(function(a,L){return a.concat(L.topics||[]);},[])).forEach(function(r){sum.push(r);});
+  sum.push([],["Countries 国家",""]);
+  group(rows.map(function(L){return L.country;})).forEach(function(r){sum.push(r);});
+  sum.push([],["Visitor types 客户类型",""]);
+  group(rows.reduce(function(a,L){return a.concat((L.types&&L.types.length)?L.types:(L.type?[L.type]:[]));},[])).forEach(function(r){sum.push(r);});
+  var ws3=X.utils.aoa_to_sheet(sum);
+  ws3["!cols"]=[{wch:44},{wch:12}];
+  X.utils.book_append_sheet(wb,ws3,"Summary");
+
+  return X.write(wb,{bookType:"xlsx",type:"array"});
+}
+function exportExcel(rows,filename,label){
+  if(!rows.length){toast("Nothing to export yet");return;}
+  toast("Building the Excel file…");
+  loadLib(LIB_XLSX,"XLSX").then(function(){
+    var buf=buildWorkbook(rows,label);
+    offer(filename,new Blob([buf],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"}));
+  },function(){toast("Could not load the Excel builder — check the connection and try again");});
+}
+
+/* --- PDF: text is painted onto pages so Chinese always renders --- */
+var BOLDKEYS=["QUESTIONS FOR YOU","HOT LEADS","OTHER VISITORS","Product interest","What they asked about","Countries","Visitor types","需要您回答","重点客户","其他到访","产品兴趣","问题分布","国家","客户类型"];
+function isBold(t){for(var i=0;i<BOLDKEYS.length;i++)if(t.indexOf(BOLDKEYS[i])===0||t.indexOf(BOLDKEYS[i])>-1&&t.length<70)return true;return false;}
+function layoutLines(text,ctx,maxW){
+  var out=[];
+  text.split("\n").forEach(function(raw){
+    if(/^[\u2500\-]{6,}$/.test(raw.trim())){out.push({rule:true});return;}
+    var t=raw.replace(/^#+\s*/,"").replace(/\*\*/g,"");
+    if(!t.trim()){out.push({text:""});return;}
+    var indent=(t.match(/^\s*/)||[""])[0].length;
+    var pad=indent?"    ".slice(0,Math.min(4,indent)):"";
+    var bold=isBold(t.trim());
+    ctx.font=(bold?"600 ":"")+"21px "+FONT;
+    var words=t.trim().split(/(\s+)/), line=pad, first=true;
+    words.forEach(function(w){
+      var test=line+w;
+      if(ctx.measureText(test).width>maxW&&line.trim()){
+        out.push({text:line,bold:bold});line=pad+(first?"":"  ")+w.replace(/^\s+/,"");first=false;
+      }else line=test;
+    });
+    if(line.trim()||!out.length)out.push({text:line,bold:bold});
+  });
+  return out;
+}
+function makePDF(day,text){
+  var S=2, W=595*S, H=842*S, M=44*S, LH=30, maxW=W-M*2;
+  var probe=document.createElement("canvas").getContext("2d");
+  var lines=layoutLines(text,probe,maxW);
+  var headH=104*S, footH=30*S;
+  var cap1=Math.floor((H-M-footH-headH)/LH), capN=Math.floor((H-M*2-footH)/LH);
+  var pages=[], i=0;
+  while(i<lines.length){var n=pages.length?capN:cap1;pages.push(lines.slice(i,i+n));i+=n;}
+  if(!pages.length)pages=[[]];
+  var doc=new window.jspdf.jsPDF({unit:"pt",format:"a4",compress:true});
+  pages.forEach(function(pl,idx){
+    var cv=document.createElement("canvas");cv.width=W;cv.height=H;
+    var c=cv.getContext("2d");
+    c.fillStyle="#ffffff";c.fillRect(0,0,W,H);
+    var y=M;
+    if(idx===0){
+      c.fillStyle="#111111";c.font="700 "+(22*S)+"px "+FONT;
+      c.fillText(settings.brand||"PROMPTERGO",M,y+20*S);
+      c.fillStyle="#6a6a66";c.font=(11*S)+"px "+FONT;
+      c.fillText("IBC2026 · RAI Amsterdam · "+fmtDay(day),M,y+40*S);
+      c.strokeStyle="#d81f26";c.lineWidth=2.5*S;
+      c.beginPath();c.moveTo(M,y+52*S);c.lineTo(W-M,y+52*S);c.stroke();
+      y+=headH;
+    }
+    pl.forEach(function(L){
+      if(L.rule){
+        c.strokeStyle="#d9d7d1";c.lineWidth=1*S;
+        c.beginPath();c.moveTo(M,y-8);c.lineTo(W-M,y-8);c.stroke();
+      }else if(L.text){
+        c.fillStyle=L.bold?"#111111":"#33332f";
+        c.font=(L.bold?"600 ":"")+"21px "+FONT;
+        c.fillText(L.text,M,y+16);
+      }
+      y+=LH;
+    });
+    c.fillStyle="#9a9892";c.font=(9*S)+"px "+FONT;
+    c.fillText((settings.brand||"PROMPTERGO")+" — page "+(idx+1)+" of "+pages.length,M,H-M+14*S);
+    if(idx)doc.addPage();
+    doc.addImage(cv.toDataURL("image/png"),"PNG",0,0,595,842,undefined,"FAST");
+  });
+  return doc.output("blob");
+}
+function exportPDF(){
+  var day=$("#repDay").value||todayStr();
+  var text=$("#repText").textContent;
+  if(!text||text==="—"){toast("Nothing to export yet");return;}
+  toast("Building the PDF…");
+  loadLib(LIB_PDF,"jspdf").then(function(){
+    try{ offer("PROMPTERGO-IBC2026-"+day+".pdf",makePDF(day,text)); }
+    catch(e){ toast("Could not build the PDF — use Copy text instead"); }
+  },function(){toast("Could not load the PDF builder — check the connection and try again");});
+}
+
+function offer(filename,data){
+  if(window.__dl){
+    window.__dl.save({filename:filename,data:data}).then(function(){toast("Saved");},function(e){
+      if(e&&e.code==="declined")return;fallbackDL(filename,data);
+    });
+  }else fallbackDL(filename,data);
+}
+function fallbackDL(filename,data){
+  try{
+    var b=(data instanceof Blob)?data:new Blob([data],{type:"text/plain;charset=utf-8"});
+    var a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=filename;document.body.appendChild(a);a.click();
+    setTimeout(function(){URL.revokeObjectURL(a.href);a.remove();},1200);
+  }catch(e){toast("Download blocked — use Copy text instead");}
+}
+$("#dlPdf").addEventListener("click",exportPDF);
+$("#dlXlsx").addEventListener("click",function(){
+  var day=$("#repDay").value||todayStr();
+  exportExcel(live().filter(function(L){return L.day===day;}),"PROMPTERGO-IBC2026-"+day+".xlsx",fmtDay(day));
+});
+$("#dlAll").addEventListener("click",function(){
+  exportExcel(live(),"PROMPTERGO-IBC2026-all-visitors.xlsx","All four days");
+});
+$("#dlJson").addEventListener("click",function(){offer("booth-backup.json",JSON.stringify({leads:leads,settings:settings},null,1));});
+
+/* ---------- setup ---------- */
+function fillSetup(){
+  $("#s_brand").value=settings.brand==="PROMPTERGO · IBC2026"?"":settings.brand;
+  $("#s_staff").value=settings.staffList.join("\n");
+  $("#s_prod").value=settings.products.join("\n");
+  $("#s_topic").value=settings.topics.join("\n");
+  $("#s_type").value=settings.types.join("\n");
+  $("#s_shurl").value=settings.sheetUrl||"";
+  $("#s_shtok").value=settings.sheetToken||"";
+  shState();
+}
+function lines(v,fb){var a=v.split("\n").map(function(s){return s.trim();}).filter(Boolean);return a.length?a:fb;}
+$("#saveSet").addEventListener("click",function(){
+  settings.brand=$("#s_brand").value.trim()||"PROMPTERGO · IBC2026";
+  settings.staffList=lines($("#s_staff").value,[]);
+  settings.products=lines($("#s_prod").value,DEF_PROD);
+  settings.topics=lines($("#s_topic").value,DEF_TOPIC);
+  settings.types=lines($("#s_type").value,DEF_TYPE);
+  settings.sheetUrl=$("#s_shurl").value.trim();
+  settings.sheetToken=$("#s_shtok").value.trim();
+  writeJSON(LS_S,settings);
+  if(db)db.doc("config/shared").set({s:settings,updated:Date.now()}).catch(function(){});
+  renderChipGroups();refresh();toast("Setup saved");show("capture");
+});
+
+/* ---------- tabs ---------- */
+function show(t){
+  ["capture","leads","report","setup"].forEach(function(k){$("#tab-"+k).classList.toggle("hidden",k!==t);});
+  Array.prototype.forEach.call(document.querySelectorAll("nav button"),function(b){b.setAttribute("aria-current",b.dataset.tab===t?"true":"false");});
+  if(t!=="capture")stopScan();
+  if(t==="leads")renderLeads();
+  if(t==="report"){fillDaySelect();renderReport();}
+  if(t==="setup")fillSetup();
+  window.scrollTo(0,0);
+}
+Array.prototype.forEach.call(document.querySelectorAll("nav button"),function(b){b.addEventListener("click",function(){show(b.dataset.tab);});});
+
+function refresh(){
+  $("#brandname").textContent=settings.brand||"Booth Log";
+  $("#cToday").textContent=live().filter(function(L){return L.day===todayStr();}).length;
+  $("#cAll").textContent=live().length;
+  $("#cEng").textContent=live().filter(function(L){return L.needEngineer;}).length;
+  var todo=live().filter(incomplete).length;
+  $("#savedBy").textContent=settings.staffList.length?(todo?todo+" record"+(todo>1?"s":"")+" still to complete":"Stand team: "+settings.staffList.join(", ")):"Add your names in Setup";
+  if(!$("#tab-leads").classList.contains("hidden"))renderLeads();
+  if(!$("#tab-report").classList.contains("hidden")){fillDaySelect();renderReport();}
+}
+
+/* ---------- sync + claude ---------- */
+function mergeIn(remote){
+  var byId={};leads.forEach(function(L){byId[L.id]=L;});
+  var changed=false;
+  remote.forEach(function(R){
+    var cur=byId[R.id];
+    if(!cur){leads.push(R);changed=true;}
+    else if((R.updated||0)>(cur.updated||0)){if(cur.id!==editingId){Object.assign(cur,R);changed=true;}}
+  });
+  if(changed){writeJSON(LS_L,leads);refresh();}
+}
+if(window.claude&&window.claude.use){
+  window.claude.use("db").then(function(d){
+    if(!d)return;
+    db=d;$("#syncdot").className="dot";
+    try{
+      db.collection("leads").onSnapshot(function(snap){
+        var r=[];snap.docs.forEach(function(s){var v=s.data();if(v&&v.id)r.push(v);});
+        mergeIn(r);
+        var have={};r.forEach(function(x){have[x.id]=1;});
+        leads.forEach(function(L){if(!have[L.id])db.doc("leads/"+L.id).set(L).catch(function(){});});
+      },function(){$("#syncdot").className="dot off";});
+      db.doc("config/shared").onSnapshot(function(s){
+        if(!s.exists)return;var v=s.data();
+        if(v&&v.s&&(v.updated||0)>(settings.updatedLocal||0)&&!settings.staffList.length){
+          settings=Object.assign(settings,v.s);writeJSON(LS_S,settings);renderChipGroups();refresh();
+        }
+      },function(){});
+    }catch(e){$("#syncdot").className="dot off";}
+  }).catch(function(){});
+  window.claude.use("downloads").then(function(d){if(d)window.__dl=d;}).catch(function(){});
+  window.claude.use("sample").then(function(s){
+    if(!s)return;
+    sampleFn=s;
+    s.limits().then(function(c){canSeeImages=!!(c&&c.images);}).catch(function(){});
+    var btn=$("#aiRep");btn.classList.remove("hidden");
+    btn.addEventListener("click",function(){
+      var day=$("#repDay").value||todayStr();
+      btn.disabled=true;btn.textContent="Writing…";
+      $("#repText").textContent="Thinking…";
+      s("You are writing an end-of-day trade show report for the general manager and chief engineer of PROMPTERGO (Beijing Langwei Jingyan Technology), a teleprompter manufacturer building studio, PTZ, speech, stage and portable prompters in-house since 1995. This is the company's first time exhibiting in Europe; it is at IBC2026 in Amsterdam looking for European distributors, and the chief engineer could not travel. Below is the raw booth log. Write a tight report in Chinese, then the same in English. Structure: 1) a short read on how the day went and what the European market appears to want, including anything that differs from the Chinese market; 2) the questions he must answer tonight, numbered; 3) the leads worth his personal follow-up and why. Be concrete. Invent nothing that is not in the data. No padding.\n\nRAW LOG:\n"+buildReport(day),
+        {onText:function(u){$("#repText").textContent=u.text;}})
+       .then(function(){btn.disabled=false;btn.textContent="✨ Write it up with Claude";$("#plainRep").classList.remove("hidden");})
+       .catch(function(e){
+          btn.disabled=false;btn.textContent="✨ Write it up with Claude";
+          $("#repText").textContent=(e&&e.text)||buildReport(day);
+          toast(e&&e.code==="not_granted"?"Needs your permission":"Could not generate — the plain report still works");
+       });
+    });
+  }).catch(function(){});
+}
+
+/* ================= shared Google Sheet ================= */
+var SHbusy=false, SHtimer=null, SHlast="";
+function shOn(){return !!(settings.sheetUrl&&settings.sheetToken);}
+function shState(msg){
+  var e=$("#shState");if(!e)return;
+  if(msg)SHlast=msg;
+  e.textContent=SHlast||(shOn()?"Connected — waiting to sync.":"Not connected — the app is storing everything on this device only.");
+}
+function shPost(payload){
+  return fetch(settings.sheetUrl,{
+    method:"POST",
+    headers:{"Content-Type":"text/plain;charset=utf-8"},
+    body:JSON.stringify(payload)
+  }).then(function(r){return r.json();});
+}
+function shGet(params){
+  var q=Object.keys(params).map(function(k){return k+"="+encodeURIComponent(params[k]);}).join("&");
+  return fetch(settings.sheetUrl+"?"+q).then(function(r){return r.json();});
+}
+function stripForWire(L){
+  var o={};Object.keys(L).forEach(function(k){if(k!=="dirty"&&k!=="cardPending")o[k]=L[k];});
+  return o;
+}
+function shSync(force){
+  if(!shOn()||SHbusy)return Promise.resolve();
+  SHbusy=true;
+  var dirty=leads.filter(function(L){return L.dirty;}).slice(0,8);
+  var payload={token:settings.sheetToken,action:"push",leads:[]};
+  var photoBudget=2;
+  dirty.forEach(function(L){
+    var w=stripForWire(L);
+    if(L.hasCard&&!L.cardUrl&&photoBudget>0){
+      try{var d=localStorage.getItem(LS_P+L.id);if(d){w.photo=d;photoBudget--;}}catch(e){}
+    }
+    payload.leads.push(w);
+  });
+  shState(dirty.length?("Sending "+dirty.length+"…"):"Checking for updates…");
+  var step=dirty.length?shPost(payload):Promise.resolve({ok:true});
+  return step.then(function(res){
+    if(!res||!res.ok)throw new Error((res&&res.error)||"push failed");
+    (res.saved||[]).forEach(function(sv){
+      var L=leads.filter(function(x){return x.id===sv.id;})[0];
+      if(!L)return;
+      L.dirty=0;delete L.cardPending;
+      if(sv.cardUrl)L.cardUrl=sv.cardUrl;
+    });
+    return shGet({token:settings.sheetToken,action:"pull",since:settings.lastPull||0});
+  }).then(function(res){
+    if(!res||!res.ok)throw new Error((res&&res.error)||"pull failed");
+    var added=0,changed=0;
+    var byId={};leads.forEach(function(L){byId[L.id]=L;});
+    (res.leads||[]).forEach(function(R){
+      if(!R||!R.id)return;
+      var cur=byId[R.id];
+      if(!cur){R.dirty=0;leads.push(R);byId[R.id]=R;added++;return;}
+      if(cur.dirty||cur.id===editingId)return;
+      if((R.updated||0)>(cur.updated||0)){Object.assign(cur,R);cur.dirty=0;changed++;}
+    });
+    settings.lastPull=res.serverTime||settings.lastPull;
+    writeJSON(LS_S,settings);writeJSON(LS_L,leads);
+    var still=leads.filter(function(L){return L.dirty;}).length;
+    $("#syncdot").className=still?"dot pending":"dot";
+    shState("Synced "+new Date().toLocaleTimeString(undefined,{hour:"2-digit",minute:"2-digit"})
+      +(added||changed?(" · "+added+" new, "+changed+" updated"):"")
+      +(still?(" · "+still+" waiting"):""));
+    if(added||changed)refresh();
+    SHbusy=false;
+    if(still)setTimeout(function(){shSync();},1200);
+  }).catch(function(err){
+    SHbusy=false;
+    $("#syncdot").className="dot pending";
+    shState("Offline — "+leads.filter(function(L){return L.dirty;}).length+" waiting. Will retry.");
+  });
+}
+function shStart(){
+  if(SHtimer)clearInterval(SHtimer);
+  if(!shOn())return;
+  shSync();
+  SHtimer=setInterval(function(){shSync();},15000);
+}
+$("#shNow").addEventListener("click",function(){
+  settings.sheetUrl=$("#s_shurl").value.trim();
+  settings.sheetToken=$("#s_shtok").value.trim();
+  writeJSON(LS_S,settings);
+  if(!shOn()){toast("Fill in the URL and token first");return;}
+  leads.forEach(function(L){L.dirty=1;});
+  shStart();toast("Pushing everything up");
+});
+$("#shTest").addEventListener("click",function(){
+  var u=$("#s_shurl").value.trim(), t=$("#s_shtok").value.trim();
+  if(!u||!t){toast("Fill in both fields");return;}
+  settings.sheetUrl=u;settings.sheetToken=t;writeJSON(LS_S,settings);
+  shState("Testing…");
+  shGet({token:t,action:"ping"}).then(function(r){
+    if(r&&r.ok){shState("Connected ✓ — sheet reachable");toast("Connected");shStart();}
+    else {shState("Rejected: "+((r&&r.error)||"unknown")+". Check the token matches the script.");toast("Token rejected");}
+  }).catch(function(){
+    shState("No answer. Check the URL ends in /exec and the deployment is set to Anyone.");
+    toast("Could not reach the sheet");
+  });
+});
+document.addEventListener("visibilitychange",function(){if(!document.hidden)shSync();});
+window.addEventListener("online",function(){shSync();});
+
+
+if("serviceWorker" in navigator&&location.protocol==="https:"){
+  window.addEventListener("load",function(){navigator.serviceWorker.register("./sw.js").catch(function(){});});
+}
+renderChipGroups();refresh();shStart();
+})();
+</script>
+</body>
+</html>
