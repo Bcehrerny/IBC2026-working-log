@@ -986,12 +986,11 @@ function renderLeads(){
 
 /* ---------- prep list ---------- */
 var PREP_DAYS=[
-  {k:"pre",   label:"Before the conference"},
+  {k:"pre",   label:"Setup day"},
   {k:"d1",    label:"Day 1 · Fri 11 Sep"},
   {k:"d2",    label:"Day 2 · Sat 12 Sep"},
   {k:"d3",    label:"Day 3 · Sun 13 Sep"},
-  {k:"d4",    label:"Day 4 · Mon 14 Sep"},
-  {k:"post",  label:"After the conference"}
+  {k:"d4",    label:"Day 4 · Mon 14 Sep/Closing"}
 ];
 var STARTERS={
   pre:["Confirm CE marking and the Declaration of Conformity with chief engineer",
@@ -1423,7 +1422,7 @@ $("#saveSet").addEventListener("click",function(){
 
 /* ---------- tabs ---------- */
 function show(t){
-  ["capture","leads","prep","report","setup"].forEach(function(k){$("#tab-"+k).classList.toggle("hidden",k!==t);});
+  ["capture","leads","prep","report"].forEach(function(k){$("#tab-"+k).classList.toggle("hidden",k!==t);});
   Array.prototype.forEach.call(document.querySelectorAll("nav button"),function(b){b.setAttribute("aria-current",b.dataset.tab===t?"true":"false");});
   if(t!=="capture")stopScan();
   if(t==="leads")renderLeads();
