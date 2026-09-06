@@ -9,7 +9,14 @@
 
 var TOKEN  = "prompt-ibc26-CHANGE-THIS";
 var SHEET  = "Visitors";
+var PREP   = "Prep";
 var FOLDER = "Booth Log cards";
+
+var PHEAD = ["id","Day","When","Task","Done","Done by","Added by","Deleted","Updated","Server time"];
+var DAYLABEL = {
+  pre: "Before the show", d1: "Day 1 \u00b7 Fri 11 Sep", d2: "Day 2 \u00b7 Sat 12 Sep",
+  d3: "Day 3 \u00b7 Sun 13 Sep", d4: "Day 4 \u00b7 Mon 14 Sep", post: "After the show"
+};
 
 var HEAD = ["id","Date","Time","Name","Company","Country","Job title","Email","Phone",
   "Visitor type","Products","Asked about","Questions by product","Anything else asked",
@@ -40,6 +47,13 @@ function setup() {
   q.getRange("H1").setValue("Replied to customer").setFontWeight("bold");
   q.setColumnWidth(6, 400); q.setColumnWidth(7, 400);
   q.setFrozenRows(1);
+
+  var pr = ss.getSheetByName(PREP) || ss.insertSheet(PREP);
+  pr.clear();
+  pr.getRange(1, 1, 1, PHEAD.length).setValues([PHEAD]).setFontWeight("bold");
+  pr.setFrozenRows(1);
+  pr.setColumnWidth(4, 420);
+  pr.getRange("J:J").setNumberFormat("0");
 
   var d = ss.getSheetByName("Dashboard") || ss.insertSheet("Dashboard");
   d.clear();
@@ -105,7 +119,14 @@ function doGet(e) {
     var t = Number(vals[i][HEAD.length-1] || vals[i][HEAD.length-2] || 0);
     if (t > since) rows.push(fromRow(vals[i]));
   }
-  return out({ ok: true, leads: rows, serverTime: Date.now() });
+  var pv = prepSheet().getDataRange().getValues();
+  var ptasks = [];
+  for (var j = 1; j < pv.length; j++) {
+    if (!pv[j][0]) continue;
+    var pt = Number(pv[j][PHEAD.length - 1] || pv[j][PHEAD.length - 2] || 0);
+    if (pt > since) ptasks.push(prepFromRow(pv[j]));
+  }
+  return out({ ok: true, leads: rows, prep: ptasks, serverTime: Date.now() });
 }
 
 function doPost(e) {
@@ -131,7 +152,21 @@ function doPost(e) {
       else sh.appendRow(row);
       saved.push({ id: L.id, cardUrl: cardUrl });
     });
-    return out({ ok: true, saved: saved, serverTime: Date.now() });
+    var savedPrep = [];
+    if (body.prep && body.prep.length) {
+      var psh = prepSheet(), pids = {};
+      var pcol = psh.getRange(1, 1, Math.max(psh.getLastRow(), 1), 1).getValues();
+      for (var k = 1; k < pcol.length; k++) if (pcol[k][0]) pids[pcol[k][0]] = k + 1;
+      body.prep.forEach(function (t) {
+        var prow = [t.id, t.day || "", DAYLABEL[t.day] || t.day || "", t.text || "",
+                    t.done ? "YES" : "", t.doneBy || "", t.by || "",
+                    t.deleted ? "YES" : "", Number(t.updated || Date.now()), Date.now()];
+        if (pids[t.id]) psh.getRange(pids[t.id], 1, 1, PHEAD.length).setValues([prow]);
+        else psh.appendRow(prow);
+        savedPrep.push(t.id);
+      });
+    }
+    return out({ ok: true, saved: saved, savedPrep: savedPrep, serverTime: Date.now() });
   } catch (err) {
     return out({ ok: false, error: String(err) });
   } finally {
@@ -149,6 +184,25 @@ function sheet() {
   var sh = ss.getSheetByName(SHEET);
   if (!sh) { sh = ss.insertSheet(SHEET); sh.getRange(1,1,1,HEAD.length).setValues([HEAD]); sh.setFrozenRows(1); }
   return sh;
+}
+function prepSheet() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sh = ss.getSheetByName(PREP);
+  if (!sh) {
+    sh = ss.insertSheet(PREP);
+    sh.getRange(1, 1, 1, PHEAD.length).setValues([PHEAD]);
+    sh.setFrozenRows(1);
+  }
+  return sh;
+}
+function prepFromRow(r) {
+  return {
+    id: r[0], day: r[1], text: r[3],
+    done: String(r[4]).toUpperCase() === "YES" ? 1 : 0,
+    doneBy: r[5], by: r[6],
+    deleted: String(r[7]).toUpperCase() === "YES" ? 1 : 0,
+    created: Number(r[8] || 0), updated: Number(r[8] || 0)
+  };
 }
 function folder() {
   var it = DriveApp.getFoldersByName(FOLDER);
