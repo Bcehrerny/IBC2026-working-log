@@ -296,14 +296,15 @@ pre.rep{white-space:pre-wrap;word-break:break-word;background:var(--field);borde
   </div>
   <div class="card">
     <h2>Shared Google Sheet <span class="cn">共享表格</span></h2>
-    <p class="sub">Paste these once on each phone. They stay on the device and are never part of the published code, so a public page never exposes them.</p>
-    <div class="f"><label for="s_shurl">Web app URL</label><input type="text" id="s_shurl" placeholder="https://script.google.com/macros/s/…/exec" autocapitalize="off" autocomplete="off"></div>
-    <div class="f"><label for="s_shtok">Shared token</label><input type="text" id="s_shtok" placeholder="the token you set in the script" autocapitalize="off" autocomplete="off"></div>
+    <p class="sub">Already connected to the stand's sheet — there is nothing to do here. Everyone who opens the app is writing into the same list. Only change these to point a phone at a different sheet.</p>
+    <div class="f"><label for="s_shurl">Web app URL</label><input type="text" id="s_shurl" placeholder="the stand's sheet" autocapitalize="off" autocomplete="off"></div>
+    <div class="f"><label for="s_shtok">Shared token</label><input type="text" id="s_shtok" placeholder="the stand's token" autocapitalize="off" autocomplete="off"></div>
     <div class="btnrow">
       <button class="btn" id="shTest">Test connection</button>
       <button class="btn" id="shNow">Sync now</button>
     </div>
     <p class="tiny" id="shState" style="margin-top:11px">Not connected — the app is storing everything on this device only.</p>
+    <p class="tiny" style="margin-top:7px">Empty either box and save to go back to the stand's sheet. If a phone ever stops showing other people's visitors, tap <b>Sync now</b> — it re-reads the whole sheet from the beginning.</p>
   </div>
 
   <div class="card">
@@ -382,12 +383,20 @@ var DEF_TYPE=[
  "Competitor",
  "Other"
 ];
+/* The stand's shared sheet. Every phone that opens the app is connected to this
+   already — nobody has to type anything in Setup. Overriding it in Setup still
+   works and that override wins on that one phone. */
+var SHEET_URL_DEFAULT="https://script.google.com/macros/s/AKfycbyQOEMvPG3nn1Dyol8OjclUQ9GTOHOUenxKPDVqBZv7dGZqv1IkaV9ntiTfM8hAtljT/exec";
+var SHEET_TOKEN_DEFAULT="ibc26-visitor-log-berry";
+
 function readJSON(k,f){try{var v=localStorage.getItem(k);return v?JSON.parse(v):f;}catch(e){return f;}}
 function writeJSON(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true;}catch(e){toast("Device storage full — export now");return false;}}
 
 var leads=readJSON(LS_L,[]);
 var settings=Object.assign({brand:"PROMPTERGO · IBC2026",staffList:[],products:DEF_PROD,topics:DEF_TOPIC,types:DEF_TYPE,sheetUrl:'',sheetToken:'',lastPull:0},readJSON(LS_S,{}));
 if(!Array.isArray(settings.staffList))settings.staffList=settings.staff?[settings.staff]:[];
+if(!settings.sheetUrl)settings.sheetUrl=SHEET_URL_DEFAULT;
+if(!settings.sheetToken)settings.sheetToken=SHEET_TOKEN_DEFAULT;
 
 var $=function(s){return document.querySelector(s);};
 function live(){return leads.filter(function(L){return !L.deleted;});}
@@ -1117,9 +1126,10 @@ $("#saveSet").addEventListener("click",function(){
   settings.products=lines($("#s_prod").value,DEF_PROD);
   settings.topics=lines($("#s_topic").value,DEF_TOPIC);
   settings.types=lines($("#s_type").value,DEF_TYPE);
-  settings.sheetUrl=$("#s_shurl").value.trim();
-  settings.sheetToken=$("#s_shtok").value.trim();
+  settings.sheetUrl=$("#s_shurl").value.trim()||SHEET_URL_DEFAULT;
+  settings.sheetToken=$("#s_shtok").value.trim()||SHEET_TOKEN_DEFAULT;
   writeJSON(LS_S,settings);
+  shStart();
   if(db)db.doc("config/shared").set({s:settings,updated:Date.now()}).catch(function(){});
   renderChipGroups();refresh();toast("Setup saved");show("capture");
 });
@@ -1280,12 +1290,14 @@ function shStart(){
   SHtimer=setInterval(function(){shSync();},15000);
 }
 $("#shNow").addEventListener("click",function(){
-  settings.sheetUrl=$("#s_shurl").value.trim();
-  settings.sheetToken=$("#s_shtok").value.trim();
-  writeJSON(LS_S,settings);
+  settings.sheetUrl=$("#s_shurl").value.trim()||SHEET_URL_DEFAULT;
+  settings.sheetToken=$("#s_shtok").value.trim()||SHEET_TOKEN_DEFAULT;
   if(!shOn()){toast("Fill in the URL and token first");return;}
-  leads.forEach(function(L){L.dirty=1;});
-  shStart();toast("Pushing everything up");
+  settings.lastPull=0;                       // forget the cursor: re-read the whole sheet
+  writeJSON(LS_S,settings);
+  leads.forEach(function(L){L.dirty=1;});    // and re-send everything this phone holds
+  shState("Full resync…");
+  shStart();toast("Full resync — pushing and re-reading everything");
 });
 $("#shTest").addEventListener("click",function(){
   var u=$("#s_shurl").value.trim(), t=$("#s_shtok").value.trim();

@@ -14,7 +14,7 @@ var FOLDER = "Booth Log cards";
 var HEAD = ["id","Date","Time","Name","Company","Country","Job title","Email","Phone",
   "Visitor type","Products","Asked about","Their questions","Needs engineer",
   "Question for engineer","Interest","Next step","Consent","Card photo",
-  "Own photos/video","Badge ID","Spoke with","Deleted","Updated"];
+  "Own photos/video","Badge ID","Spoke with","Deleted","Updated","Server time"];
 
 /* ---------- run this once, from the editor ---------- */
 function setup() {
@@ -69,6 +69,25 @@ function setup() {
   SpreadsheetApp.getUi().alert("Ready. Now use Deploy → New deployment → Web app.");
 }
 
+/**
+ * Run this ONCE if your sheet was created with the earlier version of this
+ * script. It adds the "Server time" header and back-fills the column so the
+ * rows already in the sheet are visible to every phone. Your data is untouched.
+ */
+function upgrade() {
+  var sh = sheet();
+  sh.getRange(1, HEAD.length).setValue("Server time").setFontWeight("bold");
+  var n = sh.getLastRow() - 1;
+  if (n > 0) {
+    var now  = Date.now();
+    var have = sh.getRange(2, HEAD.length, n, 1).getValues();
+    var out  = [];
+    for (var i = 0; i < n; i++) out.push([Number(have[i][0]) || now]);
+    sh.getRange(2, HEAD.length, n, 1).setValues(out);
+  }
+  SpreadsheetApp.getUi().alert("Upgraded " + n + " rows. Now redeploy: Deploy \u2192 Manage deployments \u2192 edit \u2192 New version.");
+}
+
 /* ---------- endpoints ---------- */
 function doGet(e) {
   var p = e.parameter || {};
@@ -80,7 +99,11 @@ function doGet(e) {
   var rows  = [];
   for (var i = 1; i < vals.length; i++) {
     if (!vals[i][0]) continue;
-    if (Number(vals[i][HEAD.length - 1] || 0) > since) rows.push(fromRow(vals[i]));
+    // Cursor is the SERVER's write time, not the phone's clock. A record typed at
+    // 10:00 on a phone with no signal and uploaded at 10:20 must still reach the
+    // other phones, and phone clocks are never in step anyway.
+    var t = Number(vals[i][24] || vals[i][23] || 0);
+    if (t > since) rows.push(fromRow(vals[i]));
   }
   return out({ ok: true, leads: rows, serverTime: Date.now() });
 }
@@ -103,6 +126,7 @@ function doPost(e) {
       var cardUrl = L.cardUrl || "";
       if (L.photo && !cardUrl) { try { cardUrl = savePhoto(L.id, L.photo); } catch (err) {} }
       var row = toRow(L, cardUrl);
+      row[24] = Date.now();          // stamped here, by the server
       if (ids[L.id]) sh.getRange(ids[L.id], 1, 1, HEAD.length).setValues([row]);
       else sh.appendRow(row);
       saved.push({ id: L.id, cardUrl: cardUrl });
@@ -144,7 +168,7 @@ function toRow(L, cardUrl) {
     L.role || "", L.email || "", L.phone || "", L.type || "", join(L.products), join(L.topics),
     L.questions || "", L.needEngineer ? "YES" : "", L.engQuestion || "", L.temp || "", L.next || "",
     L.consent === false ? "NO" : "yes", cardUrl, L.media ? "yes" : "", L.badgeId || "",
-    L.staff || "", L.deleted ? "YES" : "", Number(L.updated || Date.now())];
+    L.staff || "", L.deleted ? "YES" : "", Number(L.updated || Date.now()), 0];
 }
 function fromRow(r) {
   return {

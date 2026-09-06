@@ -38,12 +38,15 @@ Deploy, and copy the **Web app URL** — it ends in `/exec`.
 The token is what actually guards it, which is why it must be long.
 
 ## 5 · Connect the phones
-Open the app on each phone → **Setup** → Shared Google Sheet.
-Paste the URL and the token, tap **Test connection**. You want "Connected ✓".
-Then **Sync now** once to push anything already on that phone.
+Nothing to do. The stand's sheet URL and token are built into the app, so anyone
+who opens the site is already writing into the shared list.
 
-These two values live on the phone, never in the GitHub repository — a public
-page therefore gives nobody access to your data.
+To point one phone at a different sheet, type the other URL and token into Setup;
+clearing either box puts that phone back on the stand's sheet.
+
+**Because the URL and token are in the page, anyone who can open the site can read
+and write the visitor list.** The site address is the only thing protecting it — do
+not post it anywhere public. See DEPLOY-vercel.md for how to put a password in front.
 
 ## 6 · Give the boss access
 Share the Sheet with his email (Viewer is enough), and share the Drive folder
