@@ -12,9 +12,9 @@ var SHEET  = "Visitors";
 var FOLDER = "Booth Log cards";
 
 var HEAD = ["id","Date","Time","Name","Company","Country","Job title","Email","Phone",
-  "Visitor type","Products","Asked about","Their questions","Needs engineer",
-  "Question for engineer","Interest","Next step","Consent","Card photo",
-  "Own photos/video","Badge ID","Spoke with","Deleted","Updated","Server time"];
+  "Visitor type","Products","Asked about","Questions by product","Anything else asked",
+  "Needs engineer","Question for engineer","Interest","Next step","Consent","Card photo",
+  "Badge ID","Spoke with","Deleted","Updated","Server time"];
 
 /* ---------- run this once, from the editor ---------- */
 function setup() {
@@ -34,8 +34,8 @@ function setup() {
    .setValues([["Date", "Company", "Name", "Country", "Product", "Question we could not answer"]])
    .setFontWeight("bold");
   q.getRange("A2").setFormula(
-    '=IFERROR(FILTER({Visitors!B2:B,Visitors!E2:E,Visitors!D2:D,Visitors!F2:F,Visitors!K2:K,Visitors!O2:O},' +
-    ' Visitors!N2:N="YES", Visitors!W2:W<>"YES"), "No open questions yet")');
+    '=IFERROR(FILTER({Visitors!B2:B,Visitors!E2:E,Visitors!D2:D,Visitors!F2:F,Visitors!K2:K,Visitors!P2:P},' +
+    ' Visitors!O2:O="YES", Visitors!X2:X<>"YES"), "No open questions yet")');
   q.getRange("G1").setValue("Engineer's answer").setFontWeight("bold");
   q.getRange("H1").setValue("Replied to customer").setFontWeight("bold");
   q.setColumnWidth(6, 400); q.setColumnWidth(7, 400);
@@ -46,12 +46,12 @@ function setup() {
   d.getRange("A1").setValue("PROMPTERGO — IBC2026").setFontSize(16).setFontWeight("bold");
   d.getRange("A2").setFormula('="Updated "&TEXT(NOW(),"ddd d mmm HH:mm")');
   var rows = [
-    ["Visitors so far",        '=COUNTIFS(Visitors!A2:A,"<>",Visitors!W2:W,"<>YES")'],
-    ["Today",                  '=COUNTIFS(Visitors!B2:B,TEXT(TODAY(),"yyyy-mm-dd"),Visitors!W2:W,"<>YES")'],
-    ["Hot leads",              '=COUNTIFS(Visitors!P2:P,"hot",Visitors!W2:W,"<>YES")'],
-    ["Distributors / dealers", '=COUNTIFS(Visitors!J2:J,"*Distributor*",Visitors!W2:W,"<>YES")+COUNTIFS(Visitors!J2:J,"*Dealer*",Visitors!W2:W,"<>YES")'],
-    ["Waiting on the engineer",'=COUNTIFS(Visitors!N2:N,"YES",Visitors!W2:W,"<>YES")'],
-    ["Business cards captured",'=COUNTIFS(Visitors!S2:S,"<>",Visitors!W2:W,"<>YES")']
+    ["Visitors so far",        '=COUNTIFS(Visitors!A2:A,"<>",Visitors!X2:X,"<>YES")'],
+    ["Today",                  '=COUNTIFS(Visitors!B2:B,TEXT(TODAY(),"yyyy-mm-dd"),Visitors!X2:X,"<>YES")'],
+    ["Hot leads",              '=COUNTIFS(Visitors!Q2:Q,"hot",Visitors!X2:X,"<>YES")'],
+    ["Distributors / dealers", '=COUNTIFS(Visitors!J2:J,"*Distributor*",Visitors!X2:X,"<>YES")+COUNTIFS(Visitors!J2:J,"*Dealer*",Visitors!X2:X,"<>YES")'],
+    ["Waiting on the engineer",'=COUNTIFS(Visitors!O2:O,"YES",Visitors!X2:X,"<>YES")'],
+    ["Business cards captured",'=COUNTIFS(Visitors!T2:T,"<>",Visitors!X2:X,"<>YES")']
   ];
   for (var i = 0; i < rows.length; i++) {
     d.getRange(i + 4, 1).setValue(rows[i][0]);
@@ -102,7 +102,7 @@ function doGet(e) {
     // Cursor is the SERVER's write time, not the phone's clock. A record typed at
     // 10:00 on a phone with no signal and uploaded at 10:20 must still reach the
     // other phones, and phone clocks are never in step anyway.
-    var t = Number(vals[i][24] || vals[i][23] || 0);
+    var t = Number(vals[i][HEAD.length-1] || vals[i][HEAD.length-2] || 0);
     if (t > since) rows.push(fromRow(vals[i]));
   }
   return out({ ok: true, leads: rows, serverTime: Date.now() });
@@ -126,7 +126,7 @@ function doPost(e) {
       var cardUrl = L.cardUrl || "";
       if (L.photo && !cardUrl) { try { cardUrl = savePhoto(L.id, L.photo); } catch (err) {} }
       var row = toRow(L, cardUrl);
-      row[24] = Date.now();          // stamped here, by the server
+      row[HEAD.length-1] = Date.now();          // stamped here, by the server
       if (ids[L.id]) sh.getRange(ids[L.id], 1, 1, HEAD.length).setValues([row]);
       else sh.appendRow(row);
       saved.push({ id: L.id, cardUrl: cardUrl });
@@ -160,24 +160,40 @@ function savePhoto(id, dataUrl) {
   var blob = Utilities.newBlob(Utilities.base64Decode(m[2]), m[1], "card-" + id + ".jpg");
   return folder().createFile(blob).getUrl();
 }
+function notesText(L) {
+  return (L.productNotes || []).map(function (n) {
+    var bits = [n.product];
+    if (n.topics && n.topics.length) bits.push(n.topics.join(", "));
+    if (n.question) bits.push(n.question);
+    return bits.join(" \u2014 ");
+  }).join(" | ");
+}
+function parseNotes(v) {
+  return String(v || "").split("|").map(function (chunk) {
+    var parts = chunk.split("\u2014").map(function (x) { return x.trim(); });
+    if (!parts[0]) return null;
+    return { product: parts[0], topics: parts[1] ? split(parts[1]) : [], question: parts[2] || "" };
+  }).filter(Boolean);
+}
 function join(v) { return Array.isArray(v) ? v.join(", ") : (v || ""); }
 function split(v) { return String(v || "").split(",").map(function (x) { return x.trim(); }).filter(Boolean); }
 
 function toRow(L, cardUrl) {
   return [L.id, L.day || "", L.time || timeOf(L.ts), L.name || "", L.company || "", L.country || "",
     L.role || "", L.email || "", L.phone || "", L.type || "", join(L.products), join(L.topics),
-    L.questions || "", L.needEngineer ? "YES" : "", L.engQuestion || "", L.temp || "", L.next || "",
-    L.consent === false ? "NO" : "yes", cardUrl, L.media ? "yes" : "", L.badgeId || "",
+    notesText(L), L.questions || "", L.needEngineer ? "YES" : "", L.engQuestion || "",
+    L.temp || "", L.next || "", L.consent === false ? "NO" : "yes", cardUrl, L.badgeId || "",
     L.staff || "", L.deleted ? "YES" : "", Number(L.updated || Date.now()), 0];
 }
 function fromRow(r) {
   return {
     id: r[0], day: r[1], ts: r[1] + "T" + (r[2] || "00:00") + ":00", name: r[3], company: r[4],
     country: r[5], role: r[6], email: r[7], phone: r[8], type: r[9], types: split(r[9]),
-    products: split(r[10]), topics: split(r[11]), questions: r[12],
-    needEngineer: String(r[13]).toUpperCase() === "YES", engQuestion: r[14], temp: r[15],
-    next: r[16], consent: String(r[17]).toUpperCase() !== "NO", cardUrl: r[18],
-    hasCard: !!r[18], media: !!r[19], badgeId: r[20], staff: r[21],
+    products: split(r[10]), topics: split(r[11]), productNotes: parseNotes(r[12]),
+    questions: r[13], needEngineer: String(r[14]).toUpperCase() === "YES",
+    engQuestion: r[15], temp: r[16], next: r[17],
+    consent: String(r[18]).toUpperCase() !== "NO", cardUrl: r[19], hasCard: !!r[19],
+    badgeId: r[20], staff: r[21],
     deleted: String(r[22]).toUpperCase() === "YES" ? 1 : 0, updated: Number(r[23] || 0)
   };
 }

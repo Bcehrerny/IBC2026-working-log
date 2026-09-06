@@ -1,6 +1,6 @@
 /* Booth Log offline worker.
    Bump CACHE when index.html changes so phones pick the new version up. */
-var CACHE = "boothlog-v4";
+var CACHE = "boothlog-v6";
 var CORE = ["./", "./index.html", "./manifest.webmanifest",
             "./icon-192.png", "./icon-512.png", "./icon-180.png"];
 var LIBS = [

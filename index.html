@@ -62,6 +62,12 @@ nav button[aria-current="true"]{color:var(--ink);border-bottom-color:var(--tally
 nav button:focus-visible{outline:2px solid var(--tally);outline-offset:-2px}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px;margin:12px 14px;box-shadow:var(--shadow)}
 .card.edit{border-color:var(--signal);border-width:2px}
+.pblock{border-left:3px solid var(--chip-on);background:var(--panel-2);border-radius:0 9px 9px 0;padding:12px 13px;margin:0 0 10px}
+.pblock .phead{font-weight:650;font-size:15px;margin-bottom:9px}
+.pblock label{font-size:12px;margin-bottom:5px}
+.pblock .chips{margin-bottom:11px}
+.pblock .chip{font-size:13px;padding:7px 11px}
+.pblock textarea{min-height:64px}
 #engWrap{border-left:3px solid var(--signal);background:var(--panel-2);border-radius:0 8px 8px 0;padding:12px 13px;margin:-2px 0 13px}
 #engWrap label{color:var(--ink)}
 #engWrap textarea{min-height:74px}
@@ -141,12 +147,12 @@ pre.rep{white-space:pre-wrap;word-break:break-word;background:var(--field);borde
 
 <section id="tab-capture">
   <div class="card" id="captureCard">
-    <h2 id="capTitle">Who came by <span class="cn">来访客户</span></h2>
+    <h2 id="capTitle">WHO </h2>
     <p class="sub" id="capSub">Grab their details in five seconds, then fill the rest in after they walk away.</p>
 
     <div class="grab">
-      <button class="btn big" id="scanBtn">▣ Scan badge 扫工牌</button>
-      <button class="btn big" id="cardBtn">📇 Photo of card 拍名片</button>
+      <button class="btn big" id="scanBtn">▣ Scan badge </button>
+      <button class="btn big" id="cardBtn">📇 Photo of card </button>
     </div>
 
     <div id="scanBox" class="hidden">
@@ -168,12 +174,12 @@ pre.rep{white-space:pre-wrap;word-break:break-word;background:var(--field);borde
     <p class="tiny hidden" id="badgeNote" style="margin:-4px 0 12px"></p>
 
     <div class="two">
-      <div class="f"><label for="f_name">Name <span class="cn">姓名</span></label><input type="text" id="f_name" autocomplete="off"></div>
-      <div class="f"><label for="f_company">Company <span class="cn">公司</span></label><input type="text" id="f_company" autocomplete="off"></div>
+      <div class="f"><label for="f_name">Name </label><input type="text" id="f_name" autocomplete="off"></div>
+      <div class="f"><label for="f_company">Company </label><input type="text" id="f_company" autocomplete="off"></div>
     </div>
     <div class="two">
-      <div class="f"><label for="f_country">Country <span class="cn">国家</span></label><input type="text" id="f_country" autocomplete="off"></div>
-      <div class="f"><label for="f_role">Job title <span class="cn">职位</span></label><input type="text" id="f_role" autocomplete="off"></div>
+      <div class="f"><label for="f_country">Country </label><input type="text" id="f_country" autocomplete="off"></div>
+      <div class="f"><label for="f_role">Job title </label><input type="text" id="f_role" autocomplete="off"></div>
     </div>
     <div class="two">
       <div class="f"><label for="f_email">Email</label><input type="email" id="f_email" autocomplete="off" autocapitalize="off"></div>
@@ -181,57 +187,51 @@ pre.rep{white-space:pre-wrap;word-break:break-word;background:var(--field);borde
     </div>
 
     <div class="f">
-      <label>What kind of company <span class="cn">客户类型</span></label>
+      <label>Customer Type</label>
       <div class="chips" id="c_type"></div>
-      <input type="text" id="f_typeOther" class="hidden" placeholder="Which kind exactly? 具体是什么类型" style="margin-top:9px">
+      <input type="text" id="f_typeOther" class="hidden" placeholder="Which kind exactly?" style="margin-top:9px">
     </div>
   </div>
 
   <div class="card">
-    <h2>Interests &amp; questions <span class="cn">兴趣与问题</span></h2>
+    <h2>Interests &amp; questions </h2>
 
     <div class="f">
-      <label>Products they looked at <span class="cn">感兴趣的型号</span></label>
       <div class="chips" id="c_prod"></div>
     </div>
 
-    <div class="f">
-      <label>What they asked about <span class="cn">问了什么</span> — tap all that apply</label>
-      <div class="chips" id="c_topic"></div>
-    </div>
+    <div id="prodBlocks"></div>
 
     <div class="f">
-      <label for="f_q">Their exact questions &amp; anything you promised <span class="cn">原话记录</span></label>
-      <textarea id="f_q" placeholder="Use the microphone key on your keyboard — talking is faster than typing."></textarea>
+      <label for="f_q">Anything else they asked, and anything you promised </label>
+      <textarea id="f_q" placeholder="distribution, service, delivery, and etc. "></textarea>
     </div>
 
-    <label class="check"><input type="checkbox" id="f_eng"><span><b>We could not answer this — send to the engineer</b><br><span class="cn tiny">答不上来，需要工程师回答</span></span></label>
+    <label class="check"><input type="checkbox" id="f_eng"><span><b>We could not answer this — send to the engineer</b><br></span></label>
 
     <div class="f hidden" id="engWrap">
-      <label for="f_engQ">Exactly what could we not answer? <span class="cn">具体是哪个问题</span></label>
+      <label for="f_engQ">Exactly what could we not answer? </label>
       <textarea id="f_engQ" placeholder="Write it the way they asked it. This goes straight to the top of tonight's report."></textarea>
-      <p class="tiny" style="margin:6px 0 0">This one lands in the engineer's list — his answer comes back before the hall opens.</p>
     </div>
 
     <div class="f">
-      <label>How serious are they <span class="cn">意向程度</span></label>
+      <label>How serious are they </label>
       <div class="temp chips" id="c_temp"></div>
     </div>
 
     <div class="f">
-      <label for="f_next">Agreed next step <span class="cn">后续动作</span></label>
+      <label for="f_next">Followed up </label>
       <input type="text" id="f_next" placeholder="Send price list / demo Friday 14:00 / sample unit">
     </div>
 
     <div class="f" id="staffWrap">
-      <label>Who spoke with them <span class="cn">谁接待的</span></label>
+      <label>Who spoke with them </label>
       <div class="chips" id="c_staff"></div>
     </div>
 
-    <label class="check"><input type="checkbox" id="f_consent" checked><span>Happy for us to email them 同意联系<br><span class="tiny cn">If they say no, untick — do not email them afterwards.</span></span></label>
-    <label class="check"><input type="checkbox" id="f_media"><span>We also took photos / video on the phone 另拍了照片或视频</span></label>
+    <label class="check"><input type="checkbox" id="f_consent" checked><span>Happy for further contact <br></span></label>
 
-    <button class="btn primary" id="saveBtn">Save visitor 保存</button>
+    <button class="btn primary" id="saveBtn">Save </button>
     <button class="btn wide hidden" id="cancelEdit" style="width:100%;margin-top:8px">Cancel editing</button>
     <p class="tiny" id="savedBy" style="text-align:center;margin:9px 0 0"></p>
   </div>
@@ -242,9 +242,9 @@ pre.rep{white-space:pre-wrap;word-break:break-word;background:var(--field);borde
     <div class="filters">
       <button class="chip" data-filter="all" aria-pressed="true">All</button>
       <button class="chip" data-filter="today" aria-pressed="false">Today</button>
-      <button class="chip" data-filter="hot" aria-pressed="false">Hot 🔥</button>
+      <button class="chip" data-filter="hot" aria-pressed="false">Hot </button>
       <button class="chip" data-filter="eng" aria-pressed="false">For engineer</button>
-      <button class="chip" data-filter="todo" aria-pressed="false">To complete 待补充</button>
+      <button class="chip" data-filter="todo" aria-pressed="false">To complete</button>
     </div>
     <input type="text" id="searchBox" placeholder="Search name, company, question…" style="margin-bottom:8px">
     <div id="leadList"></div>
@@ -264,7 +264,7 @@ pre.rep{white-space:pre-wrap;word-break:break-word;background:var(--field);borde
   <div class="card">
     <pre class="rep" id="repText">—</pre>
     <div class="btnrow" style="margin-top:10px">
-      <button class="btn" id="copyRep">Copy text 复制</button>
+      <button class="btn" id="copyRep">Copy text</button>
       <button class="btn" id="dlPdf">Summary (PDF)</button>
       <button class="btn" id="dlXlsx">Visitors (Excel)</button>
       <button class="btn hidden" id="aiRep">✨ Write it up with Claude</button>
@@ -279,24 +279,22 @@ pre.rep{white-space:pre-wrap;word-break:break-word;background:var(--field);borde
     <h2>Set this up before day 1</h2>
     <p class="sub">Takes two minutes. Do it tonight, not in the hall.</p>
     <div class="f"><label for="s_brand">Company / stand name</label><input type="text" id="s_brand" placeholder="PROMPTERGO · Hall 11 · Stand 11.C29"></div>
-    <div class="f"><label for="s_staff">Who is on the stand — one name per line <span class="cn">接待人员</span></label><textarea id="s_staff" style="min-height:70px"></textarea></div>
     <div class="f">
-      <label for="s_prod">Your products — one per line <span class="cn">产品清单，每行一个</span></label>
+      <label for="s_prod">Product list </label>
       <textarea id="s_prod" style="min-height:150px"></textarea>
     </div>
     <div class="f">
-      <label for="s_topic">Question topics — one per line</label>
+      <label for="s_topic">Question related </label>
       <textarea id="s_topic" style="min-height:130px"></textarea>
     </div>
     <div class="f">
-      <label for="s_type">Visitor types — one per line</label>
+      <label for="s_type">Visitor types </label>
       <textarea id="s_type" style="min-height:130px"></textarea>
     </div>
     <button class="btn primary" id="saveSet">Save setup</button>
   </div>
   <div class="card">
-    <h2>Shared Google Sheet <span class="cn">共享表格</span></h2>
-    <p class="sub">Already connected to the stand's sheet — there is nothing to do here. Everyone who opens the app is writing into the same list. Only change these to point a phone at a different sheet.</p>
+    <h2>Shared Google Sheet </h2>
     <div class="f"><label for="s_shurl">Web app URL</label><input type="text" id="s_shurl" placeholder="the stand's sheet" autocapitalize="off" autocomplete="off"></div>
     <div class="f"><label for="s_shtok">Shared token</label><input type="text" id="s_shtok" placeholder="the stand's token" autocapitalize="off" autocomplete="off"></div>
     <div class="btnrow">
@@ -304,21 +302,21 @@ pre.rep{white-space:pre-wrap;word-break:break-word;background:var(--field);borde
       <button class="btn" id="shNow">Sync now</button>
     </div>
     <p class="tiny" id="shState" style="margin-top:11px">Not connected — the app is storing everything on this device only.</p>
-    <p class="tiny" style="margin-top:7px">Empty either box and save to go back to the stand's sheet. If a phone ever stops showing other people's visitors, tap <b>Sync now</b> — it re-reads the whole sheet from the beginning.</p>
   </div>
 
-  <div class="card">
+  <!-- <div class="card">
     <h2>Working as two people</h2>
     <p class="sub" style="margin-bottom:0">If you are both signed in to Claude on the same company account, records sync between your phones automatically — the dot next to the stand name turns green when the shared store is connected. If it stays grey on one phone, that phone is keeping its own copy: export from both at the end of each day and keep one phone as the main recorder.</p>
-  </div>
+  </div> -->
+
   <div class="card">
-    <h2>Your data</h2>
-    <p class="sub">Records live on this device and sync to the shared store when there is signal. Export every evening — don't rely on one copy.</p>
+    <h2>Data</h2>
+    <!-- <p class="sub">Records live on this device and sync to the shared store when there is signal. Export every evening — don't rely on one copy.</p> -->
     <div class="btnrow">
       <button class="btn" id="dlAll">Export everything (Excel)</button>
       <button class="btn" id="dlJson">Backup file (JSON)</button>
     </div>
-    <p class="tiny" style="margin-top:12px">Visitors are in the EU, so only keep what you need, tell them why you're taking it, and delete anyone who asks. The consent tick on each record is your evidence.</p>
+    <!-- <p class="tiny" style="margin-top:12px">Visitors are in the EU, so only keep what you need, tell them why you're taking it, and delete anyone who asks. The consent tick on each record is your evidence.</p> -->
   </div>
 </section>
 
@@ -331,58 +329,33 @@ var LS_L='boothlog_leads_v1', LS_S='boothlog_set_v1', LS_P='boothlog_photo_';
 var db=null, sampleFn=null, canSeeImages=false;
 
 var DEF_PROD=[
- "PTZ Teleprompter (PTZ-18)",
- "Studio Teleprompter FLEX-21",
- "Studio Teleprompter LS-21",
- "Portable Teleprompter (PT-18EB)",
- "Speech Teleprompter SP-22EB-AS",
- "Speech Teleprompter SP-22EB-HS",
- "Teleprompter Box (CueBose)",
- "Prompting software / IP system",
- "Controllers (jog wheel, pedal, remote)",
- "Talent monitor & mounts",
- "PTZ camera Vision 4K 12X + V-Joy+",
- "Tripods & stands"
+ "PTZ Teleprompter",
+ "FLEX-21 (Studio Ultra)",
+ "LS-21 (Studio Professional)",
+ "PT-18EB (Portable)",
+ "SP-22EB-AS (Auto-tracking)",
+ "SP-22EB-HS (Speech Ultra)",
+ "CueBox"
 ];
 var DEF_TOPIC=[
  "Price",
- "Distributor terms 经销条款",
- "Exclusivity 独家",
- "MOQ",
- "Lead time 交期",
- "Camera compatibility",
- "VISCA / NDI / protocols",
- "MOS / newsroom rundown",
- "IP system & redundancy",
- "Prompting software",
- "Beam-splitter glass & optics",
- "Screen brightness",
- "310° PTZ rotation",
- "Motor noise",
- "Customisation / OEM",
- "CE certification",
+ "Distributor terms",
+ "Exclusivity",
  "Warranty & spare parts",
  "Service & support in Europe",
  "Shipping / duties",
- "vs Autoscript / CueScript / Autocue",
+ "vs Other companies",
  "Asked for a live demo"
 ];
 var DEF_TYPE=[
- "Distributor 经销商",
- "Dealer / reseller",
- "Rental house",
- "Broadcaster",
- "Production company",
- "System integrator",
- "House of worship",
- "Corporate / AV",
- "Government / conference",
- "Education",
- "Creator / freelancer",
- "Press",
- "Competitor",
+ "Distributor",
+ "Dealer / reseller ",
+ "System integrator ",
+ "Broadcaster ",
+ "Content creator ",
  "Other"
 ];
+
 /* The stand's shared sheet. Every phone that opens the app is connected to this
    already — nobody has to type anything in Setup. Overriding it in Setup still
    works and that override wins on that one phone. */
@@ -433,10 +406,53 @@ function chipVals(host){return Array.prototype.filter.call(host.children,functio
 function setChips(host,vals){Array.prototype.forEach.call(host.children,function(c){c.setAttribute("aria-pressed",(vals||[]).indexOf(c.dataset.v)>-1?"true":"false");});}
 function clearChips(host){setChips(host,[]);}
 
+function blockFor(prod){
+  var host=$("#prodBlocks"), found=null;
+  Array.prototype.forEach.call(host.children,function(b){if(b.dataset.p===prod)found=b;});
+  return found;
+}
+function renderProdBlocks(){
+  var host=$("#prodBlocks"), sel=chipVals($("#c_prod"));
+  Array.prototype.slice.call(host.children).forEach(function(b){
+    if(sel.indexOf(b.dataset.p)<0)b.remove();
+  });
+  sel.forEach(function(prod){
+    if(blockFor(prod))return;
+    var b=el("div","pblock");b.dataset.p=prod;
+    b.appendChild(el("div","phead",prod));
+    var l1=el("label",null,"What they asked about 问了什么");b.appendChild(l1);
+    var ch=el("div","chips ptopics");b.appendChild(ch);
+    buildChips(ch,settings.topics,true,[]);
+    var l2=el("label",null,"Their question about this one 具体问题");b.appendChild(l2);
+    var ta=document.createElement("textarea");
+    ta.placeholder="What exactly did they want to know about "+prod+"?";
+    b.appendChild(ta);
+    host.appendChild(b);
+  });
+  // keep the blocks in the order the chips were tapped
+  sel.forEach(function(prod){var b=blockFor(prod);if(b)host.appendChild(b);});
+}
+function productNotes(){
+  return Array.prototype.map.call($("#prodBlocks").children,function(b){
+    return {product:b.dataset.p, topics:chipVals(b.querySelector(".ptopics")), question:b.querySelector("textarea").value.trim()};
+  }).filter(function(n){return n.product;});
+}
+function allTopics(){
+  var seen={},out=[];
+  productNotes().forEach(function(n){n.topics.forEach(function(t){if(!seen[t]){seen[t]=1;out.push(t);}});});
+  return out;
+}
+function notesText(L){
+  return (L.productNotes||[]).map(function(n){
+    var bits=[n.product];
+    if((n.topics||[]).length)bits.push(n.topics.join(", "));
+    if(n.question)bits.push(n.question);
+    return bits.join(" — ");
+  }).join(" | ");
+}
 function renderChipGroups(){
   buildChips($("#c_type"),settings.types,true,[]);
   buildChips($("#c_prod"),settings.products,true,[]);
-  buildChips($("#c_topic"),settings.topics,true,[]);
   buildChips($("#c_temp"),["hot","warm","cold"],false,[]);
   var labels={hot:"🔥 Hot 有意向",warm:"Warm 观望",cold:"Cold 路过"};
   Array.prototype.forEach.call($("#c_temp").children,function(c){c.textContent=labels[c.dataset.v];});
@@ -447,6 +463,7 @@ function renderChipGroups(){
 }
 
 $("#c_type").addEventListener("click",function(){syncOther();});
+$("#c_prod").addEventListener("click",function(){renderProdBlocks();});
 function syncEng(){
   var on=$("#f_eng").checked;
   $("#engWrap").classList.toggle("hidden",!on);
@@ -575,7 +592,19 @@ function gotBadge(text){
     n.textContent="Badge read — filled in "+filled.join(", ")+". Check it is right.";
     toast("Badge read ✓");
   }else{
-    n.textContent="Badge code saved: "+text.slice(0,60)+(text.length>60?"…":"")+" — this show's badge only holds an ID, so type the details or photograph their card.";
+    n.innerHTML="";
+    n.appendChild(el("div",null,"Saved, but this badge holds no contact details — only an identifier. Photograph their card instead. Full contents of the code:"));
+    var pre=el("div",null,text);
+    pre.style.cssText="margin:6px 0;padding:8px 10px;background:var(--field);border:1px solid var(--field-line);border-radius:6px;word-break:break-all;font-family:ui-monospace,Menlo,monospace;font-size:11.5px;max-height:110px;overflow:auto";
+    n.appendChild(pre);
+    var cp=el("button","btn","Copy this code");
+    cp.style.cssText="font-size:12px;padding:6px 10px";
+    cp.addEventListener("click",function(ev){
+      ev.preventDefault();
+      if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(text).then(function(){toast("Copied");});
+      else toast("Select the text above and copy");
+    });
+    n.appendChild(cp);
     toast("Badge ID saved — no contact details inside");
   }
   n.classList.remove("hidden");
@@ -700,7 +729,10 @@ function typeArray(){
 function typeValue(){return typeArray().join(" · ");}
 $("#saveBtn").addEventListener("click",function(){
   var name=$("#f_name").value.trim(), company=$("#f_company").value.trim();
-  if(!editingId&&!name&&!company&&!pendingPhoto&&!pendingBadge&&!$("#f_q").value.trim()){toast("Add a name, a badge scan, a card photo or a question first");return;}
+  if(!name){toast("A name is required 姓名必填");$("#f_name").focus();return;}
+  if(!$("#f_email").value.trim()&&!$("#f_phone").value.trim()){
+    toast("Add an email or a phone number 邮箱或电话至少填一个");$("#f_email").focus();return;
+  }
   if($("#f_eng").checked&&!$("#f_engQ").value.trim()&&!$("#f_q").value.trim()){
     toast("Write down the question you could not answer");$("#f_engQ").focus();return;
   }
@@ -710,11 +742,11 @@ $("#saveBtn").addEventListener("click",function(){
   var body={
     name:name, company:company, country:$("#f_country").value.trim(), role:$("#f_role").value.trim(),
     email:$("#f_email").value.trim(), phone:$("#f_phone").value.trim(),
-    type:typeValue(), types:typeArray(), products:chipVals($("#c_prod")), topics:chipVals($("#c_topic")),
+    type:typeValue(), types:typeArray(), products:chipVals($("#c_prod")), topics:allTopics(), productNotes:productNotes(),
     questions:$("#f_q").value.trim(), needEngineer:$("#f_eng").checked, engQuestion:($("#f_eng").checked?$("#f_engQ").value.trim():""),
     temp:(chipVals($("#c_temp"))[0]||"warm"), next:$("#f_next").value.trim(),
     staff:(chipVals($("#c_staff"))[0]||settings.staffList[0]||""),
-    consent:$("#f_consent").checked, media:$("#f_media").checked,
+    consent:$("#f_consent").checked,
     updated:Date.now()
   };
   var L;
@@ -735,7 +767,7 @@ $("#saveBtn").addEventListener("click",function(){
   L.dirty=1;
   if(pendingPhoto)L.cardPending=1;
   writeJSON(LS_L,leads);
-  shSync();
+  try{shSync();}catch(e){}
   var wasEdit=!!editingId;
   resetForm();refresh();
   toast(wasEdit?"Updated":("Saved · "+live().filter(function(x){return x.day===todayStr();}).length+" today"));
@@ -746,9 +778,10 @@ $("#cancelEdit").addEventListener("click",function(){resetForm();show("leads");}
 function resetForm(){
   editingId=null;pendingBadge="";
   ["f_name","f_company","f_country","f_role","f_email","f_phone","f_q","f_next"].forEach(function(i){$("#"+i).value="";});
-  $("#f_eng").checked=false;$("#f_media").checked=false;$("#f_consent").checked=true;
+  $("#f_eng").checked=false;$("#f_consent").checked=true;
   $("#f_engQ").value="";$("#engWrap").classList.add("hidden");
-  [$("#c_type"),$("#c_prod"),$("#c_topic"),$("#c_temp")].forEach(clearChips);
+  [$("#c_type"),$("#c_prod"),$("#c_temp")].forEach(clearChips);
+  $("#prodBlocks").innerHTML="";
   $("#f_typeOther").value="";$("#f_typeOther").classList.add("hidden");
   if(settings.staffList.length===1)setChips($("#c_staff"),[settings.staffList[0]]);else clearChips($("#c_staff"));
   clearCard();stopScan();
@@ -765,13 +798,19 @@ function startEdit(L){
   $("#f_role").value=L.role||"";$("#f_email").value=L.email||"";$("#f_phone").value=L.phone||"";
   $("#f_q").value=L.questions||"";$("#f_next").value=L.next||"";
   $("#f_eng").checked=!!L.needEngineer;$("#f_engQ").value=L.engQuestion||"";$("#engWrap").classList.toggle("hidden",!L.needEngineer);
-  $("#f_media").checked=!!L.media;$("#f_consent").checked=L.consent!==false;
+$("#f_consent").checked=L.consent!==false;
   var tys=(L.types&&L.types.length)?L.types.slice():(L.type?L.type.split(" · "):[]);
   var oth=tys.filter(function(t){return /^Other/i.test(t);})[0];
   setChips($("#c_type"),tys.map(function(t){return /^Other/i.test(t)?"Other":t;}));
   if(oth){$("#f_typeOther").value=oth.replace(/^Other:?\s*/i,"");}
   syncOther(true);
-  setChips($("#c_prod"),L.products||[]);setChips($("#c_topic"),L.topics||[]);
+  setChips($("#c_prod"),L.products||[]);
+  renderProdBlocks();
+  (L.productNotes||[]).forEach(function(n){
+    var b=blockFor(n.product);if(!b)return;
+    setChips(b.querySelector(".ptopics"),n.topics||[]);
+    b.querySelector("textarea").value=n.question||"";
+  });
   setChips($("#c_temp"),[L.temp||"warm"]);setChips($("#c_staff"),[L.staff]);
   $("#capTitle").textContent="Finishing off "+(L.name||L.company||"this record");
   $("#capSub").textContent="Saved "+fmtDay(L.day)+" at "+fmtTime(L.ts)+". Add whatever you didn't have time for.";
@@ -790,7 +829,7 @@ Array.prototype.forEach.call(document.querySelectorAll("[data-filter]"),function
   });
 });
 $("#searchBox").addEventListener("input",renderLeads);
-function incomplete(L){return !(L.products||[]).length&&!L.questions;}
+function incomplete(L){return !(L.products||[]).length&&!L.questions&&!(L.productNotes||[]).length;}
 
 function renderLeads(){
   var host=$("#leadList");host.innerHTML="";
@@ -819,7 +858,7 @@ function renderLeads(){
     d.addEventListener("click",function(){
       if(open)return;open=true;
       var det=el("div","meta");
-      [["Email",L.email],["Phone",L.phone],["Role",L.role],["For the engineer",L.engQuestion],["Asked about",(L.topics||[]).join(", ")],["Next step",L.next],["Badge ID",L.badgeId],["Consent to contact",L.consent===false?"NO — do not email":"yes"],["Own photos/video",L.media?"yes":""]].forEach(function(p){
+      [["Email",L.email],["Phone",L.phone],["Role",L.role],["For the engineer",L.engQuestion],["Asked about",(L.topics||[]).join(", ")],["By product",notesText(L)],["Next step",L.next],["Consent to contact",L.consent===false?"NO — do not email":"yes"],["Badge ID",L.badgeId]].forEach(function(p){
         if(p[1])det.appendChild(el("div",null,p[0]+": "+p[1]));
       });
       d.appendChild(det);
@@ -841,7 +880,8 @@ function renderLeads(){
         writeJSON(LS_L,leads);
         try{localStorage.removeItem(LS_P+L.id);}catch(e){}
         try{if(db){db.doc("leads/"+L.id).set(L).catch(function(){});db.doc("photos/"+L.id).delete().catch(function(){});}}catch(e){}
-        shSync();refresh();renderLeads();
+        try{shSync();}catch(e){}
+        refresh();renderLeads();
         toast("Deleted");
       });
       row.appendChild(ed);row.appendChild(del);d.appendChild(row);
@@ -865,7 +905,7 @@ function buildReport(day){
   var d=live().filter(function(L){return L.day===day;});
   var eng=d.filter(function(L){return L.needEngineer;});
   var hot=d.filter(function(L){return L.temp==="hot";});
-  var dist=d.filter(function(L){return /Distributor|Dealer/i.test(L.type||"");});
+  var dist=d.filter(function(L){return /Distributor|Dealer|integrator/i.test(L.type||"");});
   var lines=[];
   lines.push((settings.brand||"PROMPTERGO")+" — IBC2026 · RAI Amsterdam · "+fmtDay(day));
   lines.push("Stand team: "+(settings.staffList.join(", ")||"—"));
@@ -899,8 +939,13 @@ function buildReport(day){
     hot.forEach(function(L,i){
       lines.push((i+1)+". "+[L.company,L.name,L.country,L.type].filter(Boolean).join(" / "));
       if(L.email||L.phone)lines.push("   "+[L.email,L.phone].filter(Boolean).join("  ·  "));
-      if((L.products||[]).length)lines.push("   interested in: "+L.products.join(", "));
-      if(L.questions)lines.push("   asked: "+L.questions);
+      (L.productNotes||[]).forEach(function(n){
+        var bits=[];
+        if((n.topics||[]).length)bits.push(n.topics.join(", "));
+        if(n.question)bits.push(n.question);
+        lines.push("   "+n.product+(bits.length?" — "+bits.join(" — "):""));
+      });
+      if(L.questions)lines.push("   also asked: "+L.questions);
       if(L.next)lines.push("   next step: "+L.next);
     });
     lines.push("");
@@ -910,7 +955,10 @@ function buildReport(day){
     lines.push("──────────────────────────────");
     lines.push("其他到访 OTHER VISITORS");
     rest.forEach(function(L){
-      lines.push("· "+[L.company||L.name,L.country,L.type].filter(Boolean).join(" / ")+((L.products||[]).length?" — "+L.products.join(", "):"")+(L.questions?" — "+L.questions:""));
+      var nt=notesText(L);
+      lines.push("· "+[L.name,L.company,L.country,L.type].filter(Boolean).join(" / ")
+        +(nt?"  ▸ "+nt:((L.products||[]).length?"  ▸ "+L.products.join(", "):""))
+        +(L.questions?"  ▸ "+L.questions:""));
     });
   }
   return lines.join("\n");
@@ -922,7 +970,7 @@ function renderReport(){
   var s=$("#repStats");s.innerHTML="";
   [["Visitors logged 到访",d.length],
    ["Hot leads 有意向",d.filter(function(L){return L.temp==="hot";}).length],
-   ["Distributors / dealers 经销商",d.filter(function(L){return /Distributor|Dealer/i.test(L.type||"");}).length],
+   ["Channel partners 渠道商",d.filter(function(L){return /Distributor|Dealer|integrator/i.test(L.type||"");}).length],
    ["Open questions for the engineer 待回答",d.filter(function(L){return L.needEngineer;}).length],
    ["Cards photographed 名片",d.filter(function(L){return L.hasCard;}).length],
    ["Still to complete 待补充",d.filter(incomplete).length],
@@ -954,22 +1002,22 @@ function loadLib(src,name){
   });
 }
 
-var XL_COLS=["Date","Time","Name","Company","Country","Job title","Email","Phone","Visitor type","Products","Asked about","Their questions","Needs engineer","Question for engineer","Interest","Next step","Consent","Card photo","Own photos/video","Badge ID","Spoke with"];
+var XL_COLS=["Date","Time","Name","Company","Country","Job title","Email","Phone","Visitor type","Products","Asked about","Questions by product","Anything else asked","Needs engineer","Question for engineer","Interest","Next step","Consent","Card photo","Badge ID","Spoke with"];
 function xlRow(L){
   return [L.day,fmtTime(L.ts),L.name||"",L.company||"",L.country||"",L.role||"",L.email||"",L.phone||"",L.type||"",
-    (L.products||[]).join(", "),(L.topics||[]).join(", "),L.questions||"",
-    L.needEngineer?"YES":"",L.engQuestion||"",L.temp||"",L.next||"",L.consent===false?"NO":"yes",L.hasCard?"yes":"",L.media?"yes":"",L.badgeId||"",L.staff||""];
+    (L.products||[]).join(", "),(L.topics||[]).join(", "),notesText(L),L.questions||"",
+    L.needEngineer?"YES":"",L.engQuestion||"",L.temp||"",L.next||"",L.consent===false?"NO":"yes",L.hasCard?"yes":"",L.badgeId||"",L.staff||""];
 }
 function buildWorkbook(rows,label){
   var X=window.XLSX, wb=X.utils.book_new();
   var ws=X.utils.aoa_to_sheet([XL_COLS].concat(rows.map(xlRow)));
-  ws["!cols"]=[{wch:11},{wch:7},{wch:18},{wch:26},{wch:12},{wch:18},{wch:28},{wch:20},{wch:22},{wch:34},{wch:34},{wch:60},{wch:9},{wch:55},{wch:8},{wch:26},{wch:8},{wch:9},{wch:9},{wch:16},{wch:12}];
+  ws["!cols"]=[{wch:11},{wch:7},{wch:18},{wch:26},{wch:12},{wch:18},{wch:28},{wch:20},{wch:22},{wch:34},{wch:34},{wch:70},{wch:50},{wch:9},{wch:55},{wch:8},{wch:26},{wch:8},{wch:9},{wch:9},{wch:16},{wch:12}];
   ws["!freeze"]={xSplit:0,ySplit:1};
   X.utils.book_append_sheet(wb,ws,"Visitors");
 
   var eng=rows.filter(function(L){return L.needEngineer;});
   var qa=[["#","Date","Company","Name","Country","Product","Question we could not answer","Full conversation note","Engineer's answer 工程师回复","Answered? 已回复","Replied to customer 已回复客户"]];
-  eng.forEach(function(L,i){qa.push([i+1,L.day,L.company||"",L.name||"",L.country||"",(L.products||[]).join(", "),L.engQuestion||L.questions||(L.topics||[]).join(", "),L.questions||"","","",""]);});
+  eng.forEach(function(L,i){qa.push([i+1,L.day,L.company||"",L.name||"",L.country||"",notesText(L)||(L.products||[]).join(", "),L.engQuestion||L.questions||(L.topics||[]).join(", "),L.questions||"","","",""]);});
   var ws2=X.utils.aoa_to_sheet(qa);
   ws2["!cols"]=[{wch:5},{wch:11},{wch:26},{wch:18},{wch:12},{wch:30},{wch:60},{wch:50},{wch:60},{wch:14},{wch:20}];
   X.utils.book_append_sheet(wb,ws2,"Questions for engineer");
@@ -980,7 +1028,7 @@ function buildWorkbook(rows,label){
   var sum=[[(settings.brand||"PROMPTERGO")],["IBC2026 · RAI Amsterdam"],[label],[],
     ["Visitors logged 到访",rows.length],
     ["Hot leads 有意向",count(function(L){return L.temp==="hot";})],
-    ["Distributors / dealers 经销商",count(function(L){return /Distributor|Dealer/i.test(L.type||"");})],
+    ["Channel partners 渠道商",count(function(L){return /Distributor|Dealer|integrator/i.test(L.type||"");})],
     ["Open questions for the engineer 待回答",eng.length],
     ["Cards photographed 名片",count(function(L){return L.hasCard;})],
     ["Contactable (consent given)",count(function(L){return L.consent!==false&&(L.email||L.phone);})],
@@ -1233,7 +1281,7 @@ function stripForWire(L){
   return o;
 }
 function shSync(force){
-  if(!shOn()||SHbusy)return Promise.resolve();
+  if(!shOn()||SHbusy||typeof fetch!=="function")return Promise.resolve();
   SHbusy=true;
   var dirty=leads.filter(function(L){return L.dirty;}).slice(0,8);
   var payload={token:settings.sheetToken,action:"push",leads:[]};
