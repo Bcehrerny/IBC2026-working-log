@@ -274,7 +274,7 @@ pre.rep{white-space:pre-wrap;word-break:break-word;background:var(--field);borde
     <div class="filters">
       <button class="chip" data-filter="all" aria-pressed="true">All</button>
       <button class="chip" data-filter="today" aria-pressed="false">Today</button>
-      <button class="chip" data-filter="hot" aria-pressed="false">BUSINESS/button>
+      <button class="chip" data-filter="hot" aria-pressed="false">BUSINESS</button>
       <button class="chip" data-filter="eng" aria-pressed="false">For engineer</button>
       <button class="chip" data-filter="todo" aria-pressed="false">To complete</button>
     </div>
@@ -303,7 +303,6 @@ pre.rep{white-space:pre-wrap;word-break:break-word;background:var(--field);borde
 <section id="tab-report" class="hidden">
   <div class="card">
     <h2>Report for <span id="repDayName">today</span></h2>
-    <p class="sub">Copy this into WeChat or email it to the boss at the end of each day.</p>
     <div class="f">
       <label for="repDay">Which day</label>
       <select id="repDay"></select>
@@ -319,7 +318,6 @@ pre.rep{white-space:pre-wrap;word-break:break-word;background:var(--field);borde
       <button class="btn hidden" id="aiRep">✨ Write it up with Claude</button>
       <button class="btn hidden" id="plainRep">Back to plain report</button>
     </div>
-    <p class="tiny" style="margin:10px 0 0">The Excel file has three sheets: every visitor, the open questions for the engineer, and the day’s totals. The PDF is the page above, ready to attach to an email.</p>
   </div>
 </section>
 
@@ -824,15 +822,15 @@ function typeArray(){
 function typeValue(){return typeArray().join(" · ");}
 $("#saveBtn").addEventListener("click",function(){
   var name=$("#f_name").value.trim(), company=$("#f_company").value.trim();
-  if(!name){toast("A name is required 姓名必填");$("#f_name").focus();return;}
+  if(!name){toast("A name is required");$("#f_name").focus();return;}
   if(!$("#f_email").value.trim()&&!$("#f_phone").value.trim()){
-    toast("Add an email or a phone number 邮箱或电话至少填一个");$("#f_email").focus();return;
+    toast("Add an email or a phone number");$("#f_email").focus();return;
   }
   if($("#f_eng").checked&&!$("#f_engQ").value.trim()&&!$("#f_q").value.trim()){
     toast("Write down the question you could not answer");$("#f_engQ").focus();return;
   }
   if(chipVals($("#c_type")).some(function(t){return /^Other$/i.test(t);})&&!$("#f_typeOther").value.trim()){
-    toast("Say what kind of company 请写明具体类型");$("#f_typeOther").focus();return;
+    toast("Say what kind of company");$("#f_typeOther").focus();return;
   }
   var body={
     name:name, company:company, country:$("#f_country").value.trim(), role:$("#f_role").value.trim(),
@@ -910,7 +908,7 @@ $("#f_consent").checked=L.consent!==false;
   setChips($("#c_temp"),[L.temp||"warm"]);setChips($("#c_staff"),[L.staff]);
   $("#capTitle").textContent="Finishing off "+(L.name||L.company||"this record");
   $("#capSub").textContent="Saved "+fmtDay(L.day)+" at "+fmtTime(L.ts)+". Add whatever you didn't have time for.";
-  $("#saveBtn").textContent="Update 更新";
+  $("#saveBtn").textContent="Update";
   $("#cancelEdit").classList.remove("hidden");
   $("#captureCard").classList.add("edit");
   show("capture");
@@ -960,7 +958,7 @@ function renderLeads(){
       d.appendChild(det);
       if(L.hasCard)loadPhoto(L.id,function(src){if(src){var i=new Image();i.src=src;i.alt="Business card";d.appendChild(i);}});
       var row=el("div","btnrow");row.style.marginTop="10px";
-      var ed=el("button","btn","Open / finish 编辑");ed.style.fontSize="13px";ed.style.padding="8px 12px";
+      var ed=el("button","btn","Open / finish");ed.style.fontSize="13px";ed.style.padding="8px 12px";
       ed.addEventListener("click",function(ev){ev.stopPropagation();startEdit(L);});
       var del=el("button","btn danger","Delete");del.style.fontSize="13px";del.style.padding="8px 12px";
       var armed=false,armT=null;
@@ -988,15 +986,15 @@ function renderLeads(){
 
 /* ---------- prep list ---------- */
 var PREP_DAYS=[
-  {k:"pre",   label:"Before the show"},
+  {k:"pre",   label:"Before the conference"},
   {k:"d1",    label:"Day 1 · Fri 11 Sep"},
   {k:"d2",    label:"Day 2 · Sat 12 Sep"},
   {k:"d3",    label:"Day 3 · Sun 13 Sep"},
   {k:"d4",    label:"Day 4 · Mon 14 Sep"},
-  {k:"post",  label:"After the show"}
+  {k:"post",  label:"After the conference"}
 ];
 var STARTERS={
-  pre:["Confirm CE marking and the Declaration of Conformity with Chen Li",
+  pre:["Confirm CE marking and the Declaration of Conformity with chief engineer",
        "Confirm which website model FLEX-21 and LS-21 are",
        "Agree the price band we may say out loud",
        "Agree the nightly cut-off time for the report",
@@ -1008,8 +1006,8 @@ var STARTERS={
        "Load today's demo script on every prompter",
        "Check both phones are charged and synced",
        "Restock business cards and brochures",
-       "Read yesterday's answers from Chen Li before the doors open"],
-  post:["Send the final report and Excel file to Chen Li",
+       "Read yesterday's answers from chief engineer before the doors open"],
+  post:["Send the final report and Excel file to chief engineer",
         "Email everyone who is still waiting on an answer",
         "Archive the Apps Script deployment",
         "Pack and check the crate list against the shipping manifest"]
@@ -1247,7 +1245,7 @@ function buildWorkbook(rows,label){
   X.utils.book_append_sheet(wb,ws,"Visitors");
 
   var eng=rows.filter(function(L){return L.needEngineer;});
-  var qa=[["#","Date","Company","Name","Country","Product","Question we could not answer","Full conversation note","Engineer's answer 工程师回复","Answered? 已回复","Replied to customer 已回复客户"]];
+  var qa=[["#","Date","Company","Name","Country","Product","Question we could not answer","Full conversation note","Engineer's answer ","Answered? ","Replied to customer "]];
   eng.forEach(function(L,i){qa.push([i+1,L.day,L.company||"",L.name||"",L.country||"",notesText(L)||(L.products||[]).join(", "),L.engQuestion||L.questions||(L.topics||[]).join(", "),L.questions||"","","",""]);});
   var ws2=X.utils.aoa_to_sheet(qa);
   ws2["!cols"]=[{wch:5},{wch:11},{wch:26},{wch:18},{wch:12},{wch:30},{wch:60},{wch:50},{wch:60},{wch:14},{wch:20}];
@@ -1257,19 +1255,19 @@ function buildWorkbook(rows,label){
   function group(vals){var m={};vals.forEach(function(v){if(v)m[v]=(m[v]||0)+1;});
     return Object.keys(m).sort(function(a,b){return m[b]-m[a];}).map(function(k){return [k,m[k]];});}
   var sum=[[(settings.brand||"PROMPTERGO")],["IBC2026 · RAI Amsterdam"],[label],[],
-    ["Visitors logged 到访",rows.length],
+    ["Visitors logged",rows.length],
     ["To BUSINESS",count(function(L){return L.temp==="hot";})],
-    ["Channel partners 渠道商",count(function(L){return /Distributor|Dealer|integrator/i.test(L.type||"");})],
-    ["Open questions for the engineer 待回答",eng.length],
-    ["Cards photographed 名片",count(function(L){return L.hasCard;})],
+    ["Channel partners",count(function(L){return /Distributor|Dealer|integrator/i.test(L.type||"");})],
+    ["Open questions for the engineer ",eng.length],
+    ["Cards photographed ",count(function(L){return L.hasCard;})],
     ["Contactable (consent given)",count(function(L){return L.consent!==false&&(L.email||L.phone);})],
-    [],["Product interest 产品兴趣",""]];
+    [],["Product interest ",""]];
   group(rows.reduce(function(a,L){return a.concat(L.products||[]);},[])).forEach(function(r){sum.push(r);});
-  sum.push([],["What they asked about 问题分布",""]);
+  sum.push([],["What they asked about ",""]);
   group(rows.reduce(function(a,L){return a.concat(L.topics||[]);},[])).forEach(function(r){sum.push(r);});
-  sum.push([],["Countries 国家",""]);
+  sum.push([],["Countries ",""]);
   group(rows.map(function(L){return L.country;})).forEach(function(r){sum.push(r);});
-  sum.push([],["Visitor types 客户类型",""]);
+  sum.push([],["Visitor types ",""]);
   group(rows.reduce(function(a,L){return a.concat((L.types&&L.types.length)?L.types:(L.type?[L.type]:[]));},[])).forEach(function(r){sum.push(r);});
   var ws3=X.utils.aoa_to_sheet(sum);
   ws3["!cols"]=[{wch:44},{wch:12}];
