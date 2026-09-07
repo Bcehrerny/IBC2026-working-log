@@ -1,10 +1,12 @@
-/* Booth Log offline worker.
+/* PrompterGo Booth Log offline worker.
    Bump CACHE when index.html changes so phones pick the new version up. */
-var CACHE = "boothlog-v10";
+var CACHE = "boothlog-v12";
 var CORE = ["./", "./index.html", "./manifest.webmanifest",
+            "./jsQR.min.js",
             "./icon-192.png", "./icon-512.png", "./icon-180.png"];
+// jsQR now ships with the app and lives in CORE, so the badge scanner keeps
+// working with no signal at all. These two are still fetched best-effort.
 var LIBS = [
-  "https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.js",
   "https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js",
   "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"
 ];
