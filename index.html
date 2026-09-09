@@ -196,6 +196,7 @@ pre.rep{white-space:pre-wrap;word-break:break-word;background:var(--field);borde
     <button data-tab="leads">Log</button>
     <button data-tab="prep" id="navPrep">Prep list</button>
     <button data-tab="report">Daily report</button>
+    <button data-tab="setup">Setup</button>
   </nav>
 </header>
 
@@ -354,6 +355,10 @@ pre.rep{white-space:pre-wrap;word-break:break-word;background:var(--field);borde
     <h2>Set this up before day 1</h2>
     <p class="sub">Takes two minutes. Do it tonight, not in the hall.</p>
     <div class="f"><label for="s_brand">Company / stand name</label><input type="text" id="s_brand" placeholder="PrompterGo · Hall 11 · Stand 11.C29"></div>
+    <div class="f">
+      <label for="s_staff">Who is on the stand <span class="cn">值班人员</span> — one name per line</label>
+      <textarea id="s_staff" style="min-height:80px" placeholder="One name per line"></textarea>
+    </div>
     <div class="f">
       <label for="s_prod">Product list </label>
       <textarea id="s_prod" style="min-height:150px"></textarea>
@@ -1545,7 +1550,7 @@ $("#saveSet").addEventListener("click",function(){
 
 /* ---------- tabs ---------- */
 function show(t){
-  ["capture","leads","prep","report"].forEach(function(k){$("#tab-"+k).classList.toggle("hidden",k!==t);});
+  ["capture","leads","prep","report","setup"].forEach(function(k){$("#tab-"+k).classList.toggle("hidden",k!==t);});
   Array.prototype.forEach.call(document.querySelectorAll("nav button"),function(b){b.setAttribute("aria-current",b.dataset.tab===t?"true":"false");});
   if(t!=="capture")stopScan();
   if(t==="leads")renderLeads();
@@ -1680,6 +1685,8 @@ function shPost(payload){
   }).then(function(r){return r.json();});
 }
 function shGet(params){
+  params=Object.assign({},params);
+  params._t=Date.now()+"-"+Math.random().toString(36).slice(2,7);
   var q=Object.keys(params).map(function(k){return k+"="+encodeURIComponent(params[k]);}).join("&");
   return fetch(settings.sheetUrl+"?"+q).then(function(r){return r.json();});
 }
@@ -1780,8 +1787,8 @@ function shStart(){
   SHtimer=setInterval(function(){shSync();},15000);
 }
 $("#shNow").addEventListener("click",function(){
-  settings.sheetUrl=$("#s_shurl").value.trim()||SHEET_URL_DEFAULT;
-  settings.sheetToken=$("#s_shtok").value.trim()||SHEET_TOKEN_DEFAULT;
+  settings.sheetUrl=$("#s_shurl").value.trim()||settings.sheetUrl||SHEET_URL_DEFAULT;
+  settings.sheetToken=$("#s_shtok").value.trim()||settings.sheetToken||SHEET_TOKEN_DEFAULT;
   if(!shOn()){toast("Fill in the URL and token first");return;}
   settings.lastPull=0;                       // forget the cursor: re-read the whole sheet
   writeJSON(LS_S,settings);
@@ -1791,7 +1798,7 @@ $("#shNow").addEventListener("click",function(){
   shStart();toast("Full resync — pushing and re-reading everything");
 });
 $("#shTest").addEventListener("click",function(){
-  var u=$("#s_shurl").value.trim(), t=$("#s_shtok").value.trim();
+  var u=$("#s_shurl").value.trim()||settings.sheetUrl, t=$("#s_shtok").value.trim()||settings.sheetToken;
   if(!u||!t){toast("Fill in both fields");return;}
   settings.sheetUrl=u;settings.sheetToken=t;writeJSON(LS_S,settings);
   shState("Testing…");
