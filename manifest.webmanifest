@@ -1,31 +1,16 @@
 {
-  "name": "PrompterGo Booth Log — IBC2026",
+  "name": "PROMPTERGO Booth Log — IBC2026",
   "short_name": "Booth Log",
-  "description": "Visitor capture for the PrompterGo stand at IBC2026.",
+  "description": "Visitor capture for the PROMPTERGO stand at IBC2026.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#0b181f",
-  "theme_color": "#0b181f",
+  "background_color": "#ffffff",
+  "theme_color": "#1c1e1b",
   "icons": [
-    {
-      "src": "./icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "./icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "./icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "maskable"
-    }
+    { "src": "./icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "./icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "./icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ]
 }

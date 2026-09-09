@@ -3,48 +3,37 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>PrompterGo Working Log — IBC2026</title>
+<title>PROMPTERGO Visitor Log — IBC2026</title>
 <link rel="manifest" href="./manifest.webmanifest">
-<meta name="theme-color" content="#0b181f" media="(prefers-color-scheme: dark)">
-<meta name="theme-color" content="#f4f6f4" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1c1e1b" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
 <meta name="robots" content="noindex, nofollow, noarchive">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="IBC2026">
+<meta name="apple-mobile-web-app-title" content="Booth Log">
 <link rel="apple-touch-icon" href="./icon-180.png">
 <link rel="icon" href="./icon-192.png">
 <style>
 :root{
-  /* PrompterGo: ink, paper, green. Values sampled from the brand deck. */
-  --bg:#f4f6f4; --panel:#ffffff; --panel-2:#eef1ee; --line:#dce1dc;
-  --ink:#0b181f; --ink-2:#5e6b70; --ink-3:#868f93;
-  /* --brand is the logo green and is only ever used as a FILL behind
-     --brand-ink. As text or a hairline on white it fails contrast, so
-     --signal carries a darker cut of the same hue for those (4.4:1 on the
-     page, 4.8:1 on a card). */
-  --brand:#62ca47; --brand-ink:#0b181f; --signal:#2a8329; --accent:#62d36e;
-  --tally:#62ca47; --tally-ink:#0b181f; --go:#2f8f2e;
-  --flag-bg:#0b181f; --flag-ink:#62d36e;
-  --field:#ffffff; --field-line:#ccd4cd; --chip:#e8ece8; --chip-on:#0b181f; --chip-on-ink:#ffffff;
-  --shadow:0 1px 2px rgba(11,24,31,.06), 0 1px 0 rgba(11,24,31,.04);
+  --bg:#f7f7f5; --panel:#ffffff; --panel-2:#f0efec; --line:#d8d6d0;
+  --ink:#1a1a18; --ink-2:#5f5d57; --ink-3:#8b8880;
+  --tally:#d81f26; --tally-ink:#ffffff; --signal:#c47a00; --go:#1f7a4d;
+  --field:#ffffff; --field-line:#c9c7c1; --chip:#eceae5; --chip-on:#1a1a18; --chip-on-ink:#ffffff;
+  --shadow:0 1px 0 rgba(0,0,0,.06);
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --bg:#070f13; --panel:#0b181f; --panel-2:#132228; --line:#20323a;
-    --ink:#eaf0ef; --ink-2:#9aa9ae; --ink-3:#6d7c81;
-    --brand:#62ca47; --brand-ink:#0b181f; --signal:#62d36e; --accent:#62d36e;
-    --tally:#62ca47; --tally-ink:#0b181f; --go:#62ca47;
-    --flag-bg:#10331d; --flag-ink:#7ee08a;
-    --field:#060d11; --field-line:#26383f; --chip:#17272e; --chip-on:#eaf0ef; --chip-on-ink:#0b181f;
+    --bg:#121311; --panel:#1c1e1b; --panel-2:#242724; --line:#33362f;
+    --ink:#eceae4; --ink-2:#a5a49c; --ink-3:#75746c;
+    --tally:#ff3b30; --tally-ink:#12130f; --signal:#e8a33d; --go:#4cc38a;
+    --field:#101210; --field-line:#3c3f38; --chip:#282b26; --chip-on:#eceae4; --chip-on-ink:#121311;
     --shadow:none;
   }
 }
 :root[data-theme="dark"]{
-  --bg:#070f13; --panel:#0b181f; --panel-2:#132228; --line:#20323a;
-  --ink:#eaf0ef; --ink-2:#9aa9ae; --ink-3:#6d7c81;
-  --brand:#62ca47; --brand-ink:#0b181f; --signal:#62d36e; --accent:#62d36e;
-  --tally:#62ca47; --tally-ink:#0b181f; --go:#62ca47;
-  --flag-bg:#10331d; --flag-ink:#7ee08a;
-  --field:#060d11; --field-line:#26383f; --chip:#17272e; --chip-on:#eaf0ef; --chip-on-ink:#0b181f;
+  --bg:#121311; --panel:#1c1e1b; --panel-2:#242724; --line:#33362f;
+  --ink:#eceae4; --ink-2:#a5a49c; --ink-3:#75746c;
+  --tally:#ff3b30; --tally-ink:#12130f; --signal:#e8a33d; --go:#4cc38a;
+  --field:#101210; --field-line:#3c3f38; --chip:#282b26; --chip-on:#eceae4; --chip-on-ink:#121311;
   --shadow:none;
 }
 *{box-sizing:border-box}
@@ -58,11 +47,8 @@ body{
 header{position:sticky;top:0;z-index:20;background:var(--panel);border-bottom:1px solid var(--line);padding:10px 14px 0}
 .hrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .mark{display:flex;align-items:center;gap:8px;font-weight:650;letter-spacing:-.01em}
-.wm{font-weight:800;letter-spacing:.01em;text-transform:uppercase;font-size:16.5px}
-.wm i{font-style:normal;color:var(--signal)}
-.mark{font-size:15px}
 .dot{width:9px;height:9px;border-radius:50%;background:var(--go);flex:none}
-.dot.pending{background:transparent;box-shadow:inset 0 0 0 2.5px var(--signal);animation:blink 1.4s steps(1,end) infinite}
+.dot.pending{background:var(--tally);animation:blink 1.4s steps(1,end) infinite}
 .dot.off{background:var(--ink-3)}
 @keyframes blink{50%{opacity:.25}}
 @media (prefers-reduced-motion:reduce){.dot.pending{animation:none}}
@@ -71,10 +57,10 @@ header{position:sticky;top:0;z-index:20;background:var(--panel);border-bottom:1p
 .count span{font-size:11px;color:var(--ink-3)}
 .count.flag b{color:var(--signal)}
 nav{display:flex;gap:2px;margin-top:10px;overflow-x:auto}
-nav button{appearance:none;background:none;border:0;border-bottom:2.5px solid transparent;color:var(--ink-2);font:inherit;font-size:15px;padding:9px 12px;cursor:pointer;white-space:nowrap}
-nav button[aria-current="true"]{color:var(--ink);border-bottom-color:var(--signal);font-weight:600}
-nav button:focus-visible{outline:2px solid var(--signal);outline-offset:-2px}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px 16px;margin:12px 14px;box-shadow:var(--shadow)}
+nav button{appearance:none;background:none;border:0;border-bottom:2px solid transparent;color:var(--ink-2);font:inherit;font-size:15px;padding:9px 12px;cursor:pointer;white-space:nowrap}
+nav button[aria-current="true"]{color:var(--ink);border-bottom-color:var(--tally);font-weight:600}
+nav button:focus-visible{outline:2px solid var(--tally);outline-offset:-2px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px;margin:12px 14px;box-shadow:var(--shadow)}
 .card.edit{border-color:var(--signal);border-width:2px}
 .pblock{border-left:3px solid var(--chip-on);background:var(--panel-2);border-radius:0 9px 9px 0;padding:12px 13px;margin:0 0 10px}
 .pblock .phead{font-weight:650;font-size:15px;margin-bottom:9px}
@@ -85,39 +71,34 @@ nav button:focus-visible{outline:2px solid var(--signal);outline-offset:-2px}
 #engWrap{border-left:3px solid var(--signal);background:var(--panel-2);border-radius:0 8px 8px 0;padding:12px 13px;margin:-2px 0 13px}
 #engWrap label{color:var(--ink)}
 #engWrap textarea{min-height:74px}
-.eyebrow{font-size:11px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--signal);margin:0 0 6px}
-h2{font-size:20px;line-height:1.2;margin:0 0 6px;font-weight:700;letter-spacing:-.02em}
-.sub{color:var(--ink-2);font-size:13.5px;margin:0 0 14px;line-height:1.45}
+h2{font-size:15px;margin:0 0 4px;font-weight:650}
+.sub{color:var(--ink-3);font-size:13px;margin:0 0 12px}
 label{display:block;font-size:12.5px;color:var(--ink-2);margin:0 0 5px}
 .cn{color:var(--ink-3)}
 input[type=text],input[type=email],input[type=tel],textarea,select{width:100%;background:var(--field);color:var(--ink);border:1px solid var(--field-line);border-radius:8px;padding:11px 12px;font:inherit;font-size:16px}
 textarea{min-height:80px;resize:vertical;line-height:1.4}
-input:focus,textarea:focus,select:focus{outline:2px solid var(--signal);outline-offset:1px;border-color:transparent}
+input:focus,textarea:focus,select:focus{outline:2px solid var(--tally);outline-offset:1px;border-color:transparent}
 .f{margin-bottom:13px}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 @media(max-width:420px){.two{grid-template-columns:1fr}}
 .chips{display:flex;flex-wrap:wrap;gap:7px}
 .chip{appearance:none;font:inherit;font-size:14px;background:var(--chip);color:var(--ink);border:1px solid transparent;border-radius:999px;padding:9px 13px;cursor:pointer;line-height:1.15}
 .chip[aria-pressed="true"]{background:var(--chip-on);color:var(--chip-on-ink);font-weight:600}
-.chip:focus-visible{outline:2px solid var(--signal);outline-offset:2px}
+.chip:focus-visible{outline:2px solid var(--tally);outline-offset:2px}
 .temp{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .temp .chip{text-align:center;padding:13px 6px;border-radius:9px}
-.temp .chip[aria-pressed="true"][data-v="hot"]{background:var(--brand);color:var(--brand-ink)}
-.temp .chip[aria-pressed="true"][data-v="warm"]{background:transparent;color:var(--signal);box-shadow:inset 0 0 0 2px var(--signal);font-weight:650}
-/* Weight has to track priority: solid green, green outline, grey outline.
-   Left to the default chip style, "just looking" came out solid black and
-   shouted louder than the leads worth chasing. */
-.temp .chip[aria-pressed="true"][data-v="cold"]{background:transparent;color:var(--ink-2);box-shadow:inset 0 0 0 2px var(--ink-3);font-weight:650}
+.temp .chip[aria-pressed="true"][data-v="hot"]{background:var(--tally);color:var(--tally-ink)}
+.temp .chip[aria-pressed="true"][data-v="warm"]{background:var(--signal);color:#12130f}
 .check{display:flex;gap:10px;align-items:flex-start;background:var(--panel-2);border-radius:8px;padding:11px 12px;margin-bottom:11px;cursor:pointer}
-.check input{width:22px;height:22px;flex:none;margin:0;accent-color:var(--signal)}
+.check input{width:22px;height:22px;flex:none;margin:0;accent-color:var(--tally)}
 .check span{font-size:14px;line-height:1.35}
-.btn{appearance:none;font:inherit;font-size:15px;font-weight:600;border-radius:10px;padding:12px 16px;border:1px solid var(--line);background:var(--panel-2);color:var(--ink);cursor:pointer}
-.btn:focus-visible{outline:2px solid var(--signal);outline-offset:2px}
-.btn.primary{background:var(--brand);color:var(--brand-ink);border-color:transparent;width:100%;padding:16px;font-size:17px;font-weight:700;letter-spacing:-.01em}
+.btn{appearance:none;font:inherit;font-size:15px;font-weight:600;border-radius:9px;padding:12px 16px;border:1px solid var(--line);background:var(--panel-2);color:var(--ink);cursor:pointer}
+.btn:focus-visible{outline:2px solid var(--tally);outline-offset:2px}
+.btn.primary{background:var(--tally);color:var(--tally-ink);border-color:transparent;width:100%;padding:16px;font-size:17px}
 .btn.big{flex:1;padding:15px 10px;font-size:15px}
 .btn:disabled{opacity:.5;cursor:default}
-.btn.danger{color:var(--ink-2)}
-.btn.armed{background:var(--ink);color:var(--panel);border-color:transparent;font-weight:700}
+.btn.danger{color:var(--tally)}
+.btn.armed{background:var(--tally);color:var(--tally-ink);border-color:transparent}
 .btnrow{display:flex;gap:8px;flex-wrap:wrap}
 .tiny{font-size:12px;color:var(--ink-3)}
 .hidden{display:none !important}
@@ -131,7 +112,7 @@ input:focus,textarea:focus,select:focus{outline:2px solid var(--signal);outline-
 .lead h3{margin:0;font-size:15.5px;font-weight:650;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
 .pill{font-size:11px;font-weight:700;padding:2px 7px;border-radius:4px;background:var(--chip);color:var(--ink-2)}
 .pill.hot{background:var(--tally);color:var(--tally-ink)}
-.pill.eng{background:var(--flag-bg);color:var(--flag-ink)}
+.pill.eng{background:var(--signal);color:#12130f}
 .lead .meta{font-size:13px;color:var(--ink-2);margin-top:2px}
 .lead .q{font-size:13.5px;color:var(--ink-2);margin-top:6px;border-left:2px solid var(--line);padding-left:9px}
 .lead img{max-width:100%;border-radius:8px;margin-top:8px;display:block}
@@ -146,7 +127,7 @@ pre.rep{white-space:pre-wrap;word-break:break-word;background:var(--field);borde
 .prow:last-child{border-bottom:0}
 .phead2{width:100%;display:flex;align-items:center;gap:11px;background:var(--panel);border:0;padding:14px 13px;font:inherit;font-size:15.5px;color:var(--ink);cursor:pointer;text-align:left}
 .prow.on .phead2{background:var(--panel-2);font-weight:650}
-.phead2:focus-visible{outline:2px solid var(--signal);outline-offset:-2px}
+.phead2:focus-visible{outline:2px solid var(--tally);outline-offset:-2px}
 .tick{width:22px;height:22px;flex:none;border:1.5px solid var(--ink-3);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:transparent}
 .prow.on .tick{background:var(--chip-on);border-color:var(--chip-on);color:var(--chip-on-ink)}
 .pname{flex:1;min-width:0}
@@ -163,18 +144,16 @@ pre.rep{white-space:pre-wrap;word-break:break-word;background:var(--field);borde
 .pitem{display:flex;gap:11px;align-items:flex-start;padding:11px 2px;border-bottom:1px solid var(--line)}
 .pitem:last-child{border-bottom:0}
 .pitem .box{width:26px;height:26px;flex:none;border:1.5px solid var(--ink-3);border-radius:7px;background:none;color:transparent;font-size:15px;line-height:1;cursor:pointer;padding:0;font-weight:700}
-.pitem .box:focus-visible{outline:2px solid var(--signal);outline-offset:2px}
+.pitem .box:focus-visible{outline:2px solid var(--tally);outline-offset:2px}
 .pitem.done .box{background:var(--go);border-color:var(--go);color:#fff}
 .pitem .mid{flex:1;min-width:0}
 .pitem .txt{font-size:15.5px;line-height:1.4;cursor:text;word-break:break-word}
 .pitem.done .txt{text-decoration:line-through;color:var(--ink-3)}
 .pitem .who{font-size:11.5px;color:var(--ink-3);margin-top:3px}
 .pitem input.edit{width:100%;font-size:15.5px}
-.pitem .x{background:none;border:0;color:var(--ink-3);font-size:19px;line-height:1;padding:2px 4px;cursor:pointer;flex:none;border-radius:6px}
-.pitem .x:hover{color:var(--ink)}
-/* Confirming a delete must not be green — that reads as "go". It inverts to
-   solid ink instead, matching the armed state on the other delete buttons. */
-.pitem .x.armed{background:var(--ink);color:var(--panel);font-weight:700;font-size:13px;padding:5px 9px}
+.pitem .x{background:none;border:0;color:var(--ink-3);font-size:19px;line-height:1;padding:2px 4px;cursor:pointer;flex:none}
+.pitem .x:hover{color:var(--tally)}
+.pitem .x.armed{color:var(--tally);font-weight:700}
 .pdiv{font-size:11.5px;letter-spacing:.06em;color:var(--ink-3);font-weight:700;padding:16px 0 4px;border-top:1px solid var(--line);margin-top:6px}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:22px;z-index:60;background:var(--chip-on);color:var(--chip-on-ink);padding:11px 18px;border-radius:999px;font-size:14px;font-weight:600;box-shadow:0 6px 24px rgba(0,0,0,.3);max-width:88%;text-align:center}
 </style>
@@ -184,10 +163,10 @@ pre.rep{white-space:pre-wrap;word-break:break-word;background:var(--field);borde
 
 <header>
   <div class="hrow">
-    <div class="mark"><span class="dot off" id="syncdot"></span><span id="brandname"><span class="wm">Prompter<i>Go</i></span></span></div>
+    <div class="mark"><span class="dot off" id="syncdot"></span><span id="brandname">PROMPTERGO</span></div>
     <div class="counts">
-      <div class="count"><b id="cToday">0</b><span>today</span></div>
-      <div class="count"><b id="cAll">0</b><span>total </span></div>
+      <div class="count"><b id="cToday">0</b><span>today 今日</span></div>
+      <div class="count"><b id="cAll">0</b><span>total 总计</span></div>
       <div class="count flag"><b id="cEng">0</b><span>for engineer</span></div>
     </div>
   </div>
@@ -202,9 +181,8 @@ pre.rep{white-space:pre-wrap;word-break:break-word;background:var(--field);borde
 
 <section id="tab-capture">
   <div class="card" id="captureCard">
-    <p class="eyebrow" id="capEyebrow">New visitor</p>
-    <h2 id="capTitle">Who came by</h2>
-    <p class="sub" id="capSub">Grab their details in five seconds, then fill the rest in after they walk away.</p>
+    <h2 id="capTitle">WHO </h2>
+    <!-- <p class="sub" id="capSub">Grab their details in five seconds, then fill the rest in after they walk away.</p> -->
 
     <div class="grab">
       <button class="btn big" id="scanBtn">▣ Scan badge </button>
@@ -216,10 +194,7 @@ pre.rep{white-space:pre-wrap;word-break:break-word;background:var(--field);borde
       <div class="frame"></div>
       <div class="hint" id="scanHint">Hold the badge QR code inside the frame</div>
     </div>
-    <div class="btnrow hidden" id="scanCtl" style="margin-bottom:10px">
-      <button class="btn big" id="scanStop">Stop scanning</button>
-      <button class="btn big" id="scanShot">Photograph the badge</button>
-    </div>
+    <button class="btn wide hidden" id="scanStop" style="width:100%;margin-bottom:10px">Stop scanning</button>
     <input type="file" accept="image/*" capture="environment" id="scanFile" class="hidden">
 
     <input type="file" accept="image/*" capture="environment" id="cardFile" class="hidden">
@@ -253,8 +228,7 @@ pre.rep{white-space:pre-wrap;word-break:break-word;background:var(--field);borde
   </div>
 
   <div class="card">
-    <p class="eyebrow">What they came for</p>
-    <h2>Interests &amp; questions</h2>
+    <h2>Interests &amp; questions </h2>
 
     <div class="f">
       <div id="prodList"></div>
@@ -300,7 +274,7 @@ pre.rep{white-space:pre-wrap;word-break:break-word;background:var(--field);borde
     <div class="filters">
       <button class="chip" data-filter="all" aria-pressed="true">All</button>
       <button class="chip" data-filter="today" aria-pressed="false">Today</button>
-      <button class="chip" data-filter="hot" aria-pressed="false">BUSINESS</button>
+      <button class="chip" data-filter="hot" aria-pressed="false">Chase first</button>
       <button class="chip" data-filter="eng" aria-pressed="false">For engineer</button>
       <button class="chip" data-filter="todo" aria-pressed="false">To complete</button>
     </div>
@@ -311,7 +285,6 @@ pre.rep{white-space:pre-wrap;word-break:break-word;background:var(--field);borde
 
 <section id="tab-prep" class="hidden">
   <div class="card">
-    <p class="eyebrow">Shared with the stand</p>
     <h2>Prep list</h2>
     <p class="sub">Shared with everyone on the stand. Tick something off and it drops to the bottom with a line through it.</p>
     <div class="f">
@@ -329,8 +302,8 @@ pre.rep{white-space:pre-wrap;word-break:break-word;background:var(--field);borde
 
 <section id="tab-report" class="hidden">
   <div class="card">
-    <p class="eyebrow">End of day</p>
     <h2>Report for <span id="repDayName">today</span></h2>
+    <p class="sub">Copy this into WeChat or email it to the boss at the end of each day.</p>
     <div class="f">
       <label for="repDay">Which day</label>
       <select id="repDay"></select>
@@ -346,19 +319,15 @@ pre.rep{white-space:pre-wrap;word-break:break-word;background:var(--field);borde
       <button class="btn hidden" id="aiRep">✨ Write it up with Claude</button>
       <button class="btn hidden" id="plainRep">Back to plain report</button>
     </div>
+    <p class="tiny" style="margin:10px 0 0">The Excel file has three sheets: every visitor, the open questions for the engineer, and the day’s totals. The PDF is the page above, ready to attach to an email.</p>
   </div>
 </section>
 
 <section id="tab-setup" class="hidden">
   <div class="card">
-    <p class="eyebrow">Setup</p>
     <h2>Set this up before day 1</h2>
     <p class="sub">Takes two minutes. Do it tonight, not in the hall.</p>
-    <div class="f"><label for="s_brand">Company / stand name</label><input type="text" id="s_brand" placeholder="PrompterGo · Hall 11 · Stand 11.C29"></div>
-    <div class="f">
-      <label for="s_staff">Who is on the stand <span class="cn">值班人员</span> — one name per line</label>
-      <textarea id="s_staff" style="min-height:80px" placeholder="One name per line"></textarea>
-    </div>
+    <div class="f"><label for="s_brand">Company / stand name</label><input type="text" id="s_brand" placeholder="PROMPTERGO · Hall 11 · Stand 11.C29"></div>
     <div class="f">
       <label for="s_prod">Product list </label>
       <textarea id="s_prod" style="min-height:150px"></textarea>
@@ -376,8 +345,7 @@ pre.rep{white-space:pre-wrap;word-break:break-word;background:var(--field);borde
     <p class="tiny" style="margin-top:9px">These three lists are stored on this phone. Editing them here only changes this phone; a new version of the app replaces them automatically.</p>
   </div>
   <div class="card">
-    <p class="eyebrow">Sync</p>
-    <h2>Shared Google Sheet</h2>
+    <h2>Shared Google Sheet </h2>
     <div class="f"><label for="s_shurl">Web app URL</label><input type="text" id="s_shurl" placeholder="the stand's sheet" autocapitalize="off" autocomplete="off"></div>
     <div class="f"><label for="s_shtok">Shared token</label><input type="text" id="s_shtok" placeholder="the stand's token" autocapitalize="off" autocomplete="off"></div>
     <div class="btnrow">
@@ -388,13 +356,11 @@ pre.rep{white-space:pre-wrap;word-break:break-word;background:var(--field);borde
   </div>
 
   <!-- <div class="card">
-    <p class="eyebrow">The team</p>
     <h2>Working as two people</h2>
     <p class="sub" style="margin-bottom:0">If you are both signed in to Claude on the same company account, records sync between your phones automatically — the dot next to the stand name turns green when the shared store is connected. If it stays grey on one phone, that phone is keeping its own copy: export from both at the end of each day and keep one phone as the main recorder.</p>
   </div> -->
 
   <div class="card">
-    <p class="eyebrow">Export &amp; reset</p>
     <h2>Data</h2>
     <!-- <p class="sub">Records live on this device and sync to the shared store when there is signal. Export every evening — don't rely on one copy.</p> -->
     <div class="btnrow">
@@ -428,18 +394,14 @@ var DEF_PROD=[
  "CueBox"
 ];
 var DEF_TOPIC=[
-  "Price",
-  "Discount / Special offer",
-  "Lead time",
-  "Shipping",
-  "Warranty / After-sales service",
-  "General product information",
-  "Technical questions",
-  "Requested a demo",
-  "Requested a brochure",
-  "Requested follow-up contact",
-  "Distribution / Partnership opportunities",
-  "Other"
+ "Price",
+ "Distributor terms",
+ "Exclusivity",
+ "Warranty & spare parts",
+ "Service & support in Europe",
+ "Shipping / duties",
+ "vs Other companies",
+ "Asked for a live demo"
 ];
 var DEF_TYPE=[
  "Distributor",
@@ -453,7 +415,7 @@ var DEF_TYPE=[
 /* The stand's shared sheet. Every phone that opens the app is connected to this
    already — nobody has to type anything in Setup. Overriding it in Setup still
    works and that override wins on that one phone. */
-var SHEET_URL_DEFAULT="https://script.google.com/macros/s/AKfycbyp7Ee62UK5yKI9QGqwAXmZJouRxLPnIjLJIyj4uYAyDEIUn49K8-mmgS2Hi4DXKcrF/exec";
+var SHEET_URL_DEFAULT="https://script.google.com/macros/s/AKfycbyQOEMvPG3nn1Dyol8OjclUQ9GTOHOUenxKPDVqBZv7dGZqv1IkaV9ntiTfM8hAtljT/exec";
 var SHEET_TOKEN_DEFAULT="ibc26-visitor-log-berry";
 
 function readJSON(k,f){try{var v=localStorage.getItem(k);return v?JSON.parse(v):f;}catch(e){return f;}}
@@ -461,7 +423,7 @@ function writeJSON(k,v){try{localStorage.setItem(k,JSON.stringify(v));return tru
 
 var leads=readJSON(LS_L,[]);
 var prep=readJSON(LS_PR,[]);
-var settings=Object.assign({brand:"PrompterGo · IBC2026",staffList:[],products:DEF_PROD,topics:DEF_TOPIC,types:DEF_TYPE,sheetUrl:'',sheetToken:'',lastPull:0},readJSON(LS_S,{}));
+var settings=Object.assign({brand:"PROMPTERGO · IBC2026",staffList:[],products:DEF_PROD,topics:DEF_TOPIC,types:DEF_TYPE,sheetUrl:'',sheetToken:'',lastPull:0},readJSON(LS_S,{}));
 if(!Array.isArray(settings.staffList))settings.staffList=settings.staff?[settings.staff]:[];
 if(settings.listsVersion!==LISTS_VERSION){
   settings.products=DEF_PROD.slice();
@@ -474,62 +436,15 @@ if(!settings.sheetUrl)settings.sheetUrl=SHEET_URL_DEFAULT;
 if(!settings.sheetToken)settings.sheetToken=SHEET_TOKEN_DEFAULT;
 
 var $=function(s){return document.querySelector(s);};
-var TEMP_LABEL={hot:"Business",warm:"Interested",cold:"Just looking"};
+var TEMP_LABEL={hot:"Chase first",warm:"Worth a follow-up",cold:"Just browsing"};
 function tempLabel(v){return TEMP_LABEL[v]||v||"";}
 function live(){return leads.filter(function(L){return !L.deleted;});}
 function el(t,c,txt){var e=document.createElement(t);if(c)e.className=c;if(txt!=null)e.textContent=txt;return e;}
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,8);}
 function dayOf(iso){return (iso||"").slice(0,10);}
 function todayStr(){var d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
-/* Google Sheets hands back a Date object for anything it decided looks like a
-   date, and JSON turns that into "2026-09-10T22:00:00.000Z". Concatenating
-   "T12:00:00" onto that produced the Invalid Date other phones were showing.
-   Everything arriving from the wire goes through these first. */
-function normDay(v){
-  if(v==null)return "";
-  var s=String(v).trim();
-  if(!s)return "";
-  if(/^\d{4}-\d{2}-\d{2}$/.test(s))return s;          // already what we want
-  var m=s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);   // 10/09/2026 from a hand edit
-  if(m)return m[3]+"-"+String(m[2]).padStart(2,"0")+"-"+String(m[1]).padStart(2,"0");
-  // A full ISO stamp is a local midnight the sheet shifted into UTC:
-  // "2026-09-11" in Amsterdam leaves as "2026-09-10T22:00:00.000Z". Reading the
-  // digits off the front loses a day, so convert back through local time.
-  var d=new Date(s);
-  if(!isNaN(d.getTime()))
-    return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
-  m=s.match(/^(\d{4})-(\d{2})-(\d{2})/);
-  return m?(m[1]+"-"+m[2]+"-"+m[3]):"";
-}
-function normTime(v){
-  if(v==null)return "";
-  var s=String(v).trim();
-  if(!s)return "";
-  var m=s.match(/(\d{1,2}):(\d{2})/);                // "14:32", or 1899-12-30T14:32:00.000Z
-  if(m)return String(m[1]).padStart(2,"0")+":"+m[2];
-  return "";
-}
-function normTs(day,ts,time){                        // -> "YYYY-MM-DDTHH:MM:00" or ""
-  var d=normDay(day)||normDay(ts);
-  var t=normTime(time)||normTime(String(ts||"").slice(10));
-  if(!d)return "";
-  return d+"T"+(t||"00:00")+":00";
-}
-function fmtDay(d){
-  var s=normDay(d);
-  if(!s)return "—";
-  var x=new Date(s+"T12:00:00");
-  if(isNaN(x.getTime()))return s;
-  return x.toLocaleDateString(undefined,{weekday:"short",day:"numeric",month:"short"});
-}
-function fmtTime(iso){
-  if(!iso)return "";
-  var x=new Date(iso);
-  if(isNaN(x.getTime())){                            // fall back to the digits themselves
-    var t=normTime(iso);return t||"";
-  }
-  return x.toLocaleTimeString(undefined,{hour:"2-digit",minute:"2-digit"});
-}
+function fmtDay(d){try{return new Date(d+"T12:00:00").toLocaleDateString(undefined,{weekday:"short",day:"numeric",month:"short"});}catch(e){return d;}}
+function fmtTime(iso){try{return new Date(iso).toLocaleTimeString(undefined,{hour:"2-digit",minute:"2-digit"});}catch(e){return "";}}
 var toastT;
 function toast(m){var old=$(".toast");if(old)old.remove();var t=el("div","toast",m);document.body.appendChild(t);clearTimeout(toastT);toastT=setTimeout(function(){t.remove();},2600);}
 
@@ -631,7 +546,7 @@ function renderChipGroups(){
   buildChips($("#c_type"),settings.types,true,[]);
   buildProdList();
   buildChips($("#c_temp"),["hot","warm","cold"],false,[]);
-  var labels={hot:" Business",warm:"Interested",cold:"Just Looking"};
+  var labels={hot:"Chase first",warm:"Worth a follow-up",cold:"Just browsing"};
   Array.prototype.forEach.call($("#c_temp").children,function(c){c.textContent=labels[c.dataset.v];});
   buildChips($("#c_staff"),settings.staffList,false,[]);
   syncOther(true);
@@ -653,93 +568,50 @@ $("#f_eng").addEventListener("change",syncEng);
 /* ---------- badge QR ---------- */
 var stream=null, rafId=null, detector=null, jsqrReady=null;
 
-/* jsQR ships with the app (./jsQR.min.js) because the hall wifi cannot be
-   trusted and iOS has no BarcodeDetector, so it is the only decoder we get.
-   The CDN stays as a second chance in case the file is missing on the host. */
-function loadOneScript(src){
-  return new Promise(function(res,rej){
-    var s=document.createElement("script");
-    s.src=src;
-    s.onload=function(){window.jsQR?res(window.jsQR):rej(new Error("loaded but empty"));};
-    s.onerror=function(){rej(new Error("could not load "+src));};
-    document.head.appendChild(s);
-  });
-}
 function loadJsQR(){
   if(jsqrReady)return jsqrReady;
-  if(window.jsQR){jsqrReady=Promise.resolve(window.jsQR);return jsqrReady;}
-  jsqrReady=loadOneScript("./jsQR.min.js").catch(function(){
-    return loadOneScript("https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.js");
+  jsqrReady=new Promise(function(res,rej){
+    if(window.jsQR)return res(window.jsQR);
+    var s=document.createElement("script");
+    s.src="https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.js";
+    s.onload=function(){window.jsQR?res(window.jsQR):rej();};
+    s.onerror=rej;
+    document.head.appendChild(s);
   });
-  jsqrReady.catch(function(){jsqrReady=null;});   // let a later attempt retry
   return jsqrReady;
 }
 
 $("#scanBtn").addEventListener("click",startScan);
 $("#scanStop").addEventListener("click",stopScan);
 
-function camReason(err){
-  if(!window.isSecureContext) return "This page must be on https:// for the camera to open.";
-  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia)
-    return "This browser hides the camera from web pages. Open the site in Safari or Chrome directly, not inside WeChat or another app.";
-  var n=err&&(err.name||err.code)||"";
-  if(n==="NotAllowedError"||n==="PermissionDeniedError")
-    return "Camera permission was refused. iOS: Settings → Safari → Camera → Allow, then reload.";
-  if(n==="NotFoundError"||n==="DevicesNotFoundError") return "No camera found on this device.";
-  if(n==="NotReadableError"||n==="TrackStartError") return "Another app is holding the camera. Close it and try again.";
-  if(n==="OverconstrainedError") return "The back camera could not be selected.";
-  return "The camera would not start"+(n?(" ("+n+")"):"")+".";
-}
-function scanFail(msg){          // camera itself is unusable — offer the photo route
-  stopScan();
-  $("#scanHint").textContent="";
-  toast(msg);
-  $("#badgeNote").textContent=msg+" Photograph the badge instead — it is decoded the same way.";
-  $("#scanFile").click();
-}
 function startScan(){
   $("#scanBox").classList.remove("hidden");
-  $("#scanCtl").classList.remove("hidden");
+  $("#scanStop").classList.remove("hidden");
   $("#scanHint").textContent="Starting camera…";
-  $("#badgeNote").textContent="";
-  detector=null;
   if(window.BarcodeDetector){
     try{detector=new window.BarcodeDetector({formats:["qr_code"]});}catch(e){detector=null;}
   }
-  // Start loading the decoder now, in parallel with the camera permission prompt.
-  var decoder=detector?Promise.resolve(null):loadJsQR();
-  decoder.catch(function(){});
-
-  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){scanFail(camReason(null));return;}
-  navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:"environment"}}})
-    .then(function(st){
-      stream=st;
-      var v=$("#scanVid");v.srcObject=st;
-      var p=v.play();if(p&&p.catch)p.catch(function(){});
-      if(detector){$("#scanHint").textContent="Hold the badge QR code inside the frame";loopDetector();return;}
-      $("#scanHint").textContent="Loading the code reader…";
-      return decoder.then(function(){
-        if(!stream)return;                       // user pressed Stop while it loaded
+  navigator.mediaDevices&&navigator.mediaDevices.getUserMedia
+    ? navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:"environment"}}}).then(function(st){
+        stream=st;var v=$("#scanVid");v.srcObject=st;v.play();
         $("#scanHint").textContent="Hold the badge QR code inside the frame";
-        loopJsQR();
-      },function(){
-        // Camera is fine; only the decoder is missing. Keep the preview up.
-        $("#scanHint").textContent="Code reader unavailable — use “Photograph the badge”";
-        toast("Camera works, but the code reader did not load");
-      });
-    },function(err){ scanFail(camReason(err)); });
+        if(detector)loopDetector(); else loadJsQR().then(loopJsQR,noScanner);
+      },noScanner)
+    : noScanner();
 }
-$("#scanShot").addEventListener("click",function(){$("#scanFile").click();});
+function noScanner(){
+  stopScan();
+  $("#scanHint").textContent="";
+  toast("Camera not available here — take a photo of the badge instead");
+  $("#scanFile").click();
+}
 $("#scanFile").addEventListener("change",function(e){
   var f=e.target.files&&e.target.files[0];if(!f)return;
-  toast("Reading the photo…");
-  imgFromFile(f,1600).then(function(o){
-    return decodeCanvas(o.canvas).then(function(txt){
-      if(txt){gotBadge(txt);return;}
-      toast("No QR code found in that photo");
-      $("#badgeNote").textContent="No code found. Fill the badge frame, hold steady, avoid glare — or just type the details in.";
+  imgFromFile(f,1200).then(function(o){
+    decodeCanvas(o.canvas).then(function(txt){
+      if(txt)gotBadge(txt); else toast("No QR code found in that photo");
     });
-  }).catch(function(){toast("Could not read that photo");});
+  });
   e.target.value="";
 });
 function loopDetector(){
@@ -794,7 +666,7 @@ function stopScan(){
   if(stream){stream.getTracks().forEach(function(t){t.stop();});stream=null;}
   $("#scanVid").srcObject=null;
   $("#scanBox").classList.add("hidden");
-  $("#scanCtl").classList.add("hidden");
+  $("#scanStop").classList.add("hidden");
 }
 
 var pendingBadge="";
@@ -948,15 +820,15 @@ function typeArray(){
 function typeValue(){return typeArray().join(" · ");}
 $("#saveBtn").addEventListener("click",function(){
   var name=$("#f_name").value.trim(), company=$("#f_company").value.trim();
-  if(!name){toast("A name is required");$("#f_name").focus();return;}
+  if(!name){toast("A name is required 姓名必填");$("#f_name").focus();return;}
   if(!$("#f_email").value.trim()&&!$("#f_phone").value.trim()){
-    toast("Add an email or a phone number");$("#f_email").focus();return;
+    toast("Add an email or a phone number 邮箱或电话至少填一个");$("#f_email").focus();return;
   }
   if($("#f_eng").checked&&!$("#f_engQ").value.trim()&&!$("#f_q").value.trim()){
     toast("Write down the question you could not answer");$("#f_engQ").focus();return;
   }
   if(chipVals($("#c_type")).some(function(t){return /^Other$/i.test(t);})&&!$("#f_typeOther").value.trim()){
-    toast("Say what kind of company");$("#f_typeOther").focus();return;
+    toast("Say what kind of company 请写明具体类型");$("#f_typeOther").focus();return;
   }
   var body={
     name:name, company:company, country:$("#f_country").value.trim(), role:$("#f_role").value.trim(),
@@ -1005,7 +877,6 @@ function resetForm(){
   if(settings.staffList.length===1)setChips($("#c_staff"),[settings.staffList[0]]);else clearChips($("#c_staff"));
   clearCard();stopScan();
   $("#badgeNote").classList.add("hidden");$("#badgeNote").textContent="";
-  $("#capEyebrow").textContent="New visitor";
   $("#capTitle").innerHTML='Who came by <span class="cn">来访客户</span>';
   $("#capSub").textContent="Grab their details in five seconds, then fill the rest in after they walk away.";
   $("#saveBtn").textContent="Save visitor 保存";
@@ -1033,10 +904,9 @@ $("#f_consent").checked=L.consent!==false;
     r.querySelector("textarea").value=n.question||"";
   });
   setChips($("#c_temp"),[L.temp||"warm"]);setChips($("#c_staff"),[L.staff]);
-  $("#capEyebrow").textContent="Finishing off";
-  $("#capTitle").textContent=L.name||L.company||"This record";
+  $("#capTitle").textContent="Finishing off "+(L.name||L.company||"this record");
   $("#capSub").textContent="Saved "+fmtDay(L.day)+" at "+fmtTime(L.ts)+". Add whatever you didn't have time for.";
-  $("#saveBtn").textContent="Update";
+  $("#saveBtn").textContent="Update 更新";
   $("#cancelEdit").classList.remove("hidden");
   $("#captureCard").classList.add("edit");
   show("capture");
@@ -1068,7 +938,7 @@ function renderLeads(){
   list.forEach(function(L){
     var d=el("div","lead");
     var h=el("h3");h.appendChild(document.createTextNode(L.name||L.company||"(no name)"));
-    if(L.temp==="hot")h.appendChild(el("span","pill hot","BUSINESS"));
+    if(L.temp==="hot")h.appendChild(el("span","pill hot","CHASE FIRST"));
     if(L.needEngineer)h.appendChild(el("span","pill eng","ENGINEER"));
     if(incomplete(L))h.appendChild(el("span","pill","TO COMPLETE"));
     if(L.hasCard)h.appendChild(el("span","pill","CARD"));
@@ -1086,7 +956,7 @@ function renderLeads(){
       d.appendChild(det);
       if(L.hasCard)loadPhoto(L.id,function(src){if(src){var i=new Image();i.src=src;i.alt="Business card";d.appendChild(i);}});
       var row=el("div","btnrow");row.style.marginTop="10px";
-      var ed=el("button","btn","Open / finish");ed.style.fontSize="13px";ed.style.padding="8px 12px";
+      var ed=el("button","btn","Open / finish 编辑");ed.style.fontSize="13px";ed.style.padding="8px 12px";
       ed.addEventListener("click",function(ev){ev.stopPropagation();startEdit(L);});
       var del=el("button","btn danger","Delete");del.style.fontSize="13px";del.style.padding="8px 12px";
       var armed=false,armT=null;
@@ -1114,14 +984,15 @@ function renderLeads(){
 
 /* ---------- prep list ---------- */
 var PREP_DAYS=[
-  {k:"pre",   label:"Setup day"},
+  {k:"pre",   label:"Before the show"},
   {k:"d1",    label:"Day 1 · Fri 11 Sep"},
   {k:"d2",    label:"Day 2 · Sat 12 Sep"},
   {k:"d3",    label:"Day 3 · Sun 13 Sep"},
-  {k:"d4",    label:"Day 4 · Mon 14 Sep/Closing"}
+  {k:"d4",    label:"Day 4 · Mon 14 Sep"},
+  {k:"post",  label:"After the show"}
 ];
 var STARTERS={
-  pre:["Confirm CE marking and the Declaration of Conformity with chief engineer",
+  pre:["Confirm CE marking and the Declaration of Conformity with Chen Li",
        "Confirm which website model FLEX-21 and LS-21 are",
        "Agree the price band we may say out loud",
        "Agree the nightly cut-off time for the report",
@@ -1133,8 +1004,8 @@ var STARTERS={
        "Load today's demo script on every prompter",
        "Check both phones are charged and synced",
        "Restock business cards and brochures",
-       "Read yesterday's answers from chief engineer before the doors open"],
-  post:["Send the final report and Excel file to chief engineer",
+       "Read yesterday's answers from Chen Li before the doors open"],
+  post:["Send the final report and Excel file to Chen Li",
         "Email everyone who is still waiting on an answer",
         "Archive the Apps Script deployment",
         "Pack and check the crate list against the shipping manifest"]
@@ -1264,11 +1135,11 @@ function buildReport(day){
   var hot=d.filter(function(L){return L.temp==="hot";});
   var dist=d.filter(function(L){return /Distributor|Dealer|integrator/i.test(L.type||"");});
   var lines=[];
-  lines.push((settings.brand||"PrompterGo")+" — IBC2026 · RAI Amsterdam · "+fmtDay(day));
+  lines.push((settings.brand||"PROMPTERGO")+" — IBC2026 · RAI Amsterdam · "+fmtDay(day));
   lines.push("Stand team: "+(settings.staffList.join(", ")||"—"));
   lines.push("");
   lines.push("Visitors today: "+d.length+" (total "+live().length+")");
-  lines.push("To BUSINESS: "+hot.length+"  ·  Channel partners: "+dist.length+"  ·  Needs your answer: "+eng.length);
+  lines.push("To chase first: "+hot.length+"  ·  Channel partners: "+dist.length+"  ·  Needs your answer: "+eng.length);
   lines.push("");
   var pr=tally(d.reduce(function(a,L){return a.concat(L.products||[]);},[]));
   if(pr.length){lines.push("Product interest");lines.push("  "+pr.join("  ·  "));lines.push("");}
@@ -1280,7 +1151,7 @@ function buildReport(day){
   if(ty.length){lines.push("Visitor types");lines.push("  "+ty.join("  ·  "));lines.push("");}
   if(eng.length){
     lines.push("──────────────────────────────");
-    lines.push("QUESTIONS FOR YOU — please reply tonight");
+    lines.push("QUESTIONS for Engineer");
     eng.forEach(function(L,i){
       lines.push((i+1)+". "+[L.company,L.name,L.country].filter(Boolean).join(" / "));
       if((L.products||[]).length)lines.push("   re: "+L.products.join(", "));
@@ -1291,7 +1162,7 @@ function buildReport(day){
   }
   if(hot.length){
     lines.push("──────────────────────────────");
-    lines.push("BUSINESS");
+    lines.push("CHASE THESE FIRST");
     hot.forEach(function(L,i){
       lines.push((i+1)+". "+[L.company,L.name,L.country,L.type].filter(Boolean).join(" / "));
       if(L.email||L.phone)lines.push("   "+[L.email,L.phone].filter(Boolean).join("  ·  "));
@@ -1324,8 +1195,8 @@ function renderReport(){
   $("#repDayName").textContent=fmtDay(day);
   var d=live().filter(function(L){return L.day===day;});
   var s=$("#repStats");s.innerHTML="";
-  [["Visitors logged ",d.length],
-   ["BUSINESS",d.filter(function(L){return L.temp==="hot";}).length],
+  [["Visitors logged",d.length],
+   ["To chase first",d.filter(function(L){return L.temp==="hot";}).length],
    ["Channel partners ",d.filter(function(L){return /Distributor|Dealer|integrator/i.test(L.type||"");}).length],
    ["Open questions for the engineer ",d.filter(function(L){return L.needEngineer;}).length],
    ["Cards photographed ",d.filter(function(L){return L.hasCard;}).length],
@@ -1358,7 +1229,7 @@ function loadLib(src,name){
   });
 }
 
-var XL_COLS=["Date","Time","Name","Company","Country","Job title","Email","Phone","Visitor type","Products","Asked about","Questions by product","Anything else asked","Needs engineer","Question for engineer","Interested","Next step","Consent","Card photo","Badge ID","Spoke with"];
+var XL_COLS=["Date","Time","Name","Company","Country","Job title","Email","Phone","Visitor type","Products","Asked about","Questions by product","Anything else asked","Needs engineer","Question for engineer","Follow-up","Next step","Consent","Card photo","Badge ID","Spoke with"];
 function xlRow(L){
   return [L.day,fmtTime(L.ts),L.name||"",L.company||"",L.country||"",L.role||"",L.email||"",L.phone||"",L.type||"",
     (L.products||[]).join(", "),(L.topics||[]).join(", "),notesText(L),L.questions||"",
@@ -1372,7 +1243,7 @@ function buildWorkbook(rows,label){
   X.utils.book_append_sheet(wb,ws,"Visitors");
 
   var eng=rows.filter(function(L){return L.needEngineer;});
-  var qa=[["#","Date","Company","Name","Country","Product","Question we could not answer","Full conversation note","Engineer's answer ","Answered? ","Replied to customer "]];
+  var qa=[["#","Date","Company","Name","Country","Product","Question we could not answer","Full conversation note","Engineer's answer 工程师回复","Answered? 已回复","Replied to customer 已回复客户"]];
   eng.forEach(function(L,i){qa.push([i+1,L.day,L.company||"",L.name||"",L.country||"",notesText(L)||(L.products||[]).join(", "),L.engQuestion||L.questions||(L.topics||[]).join(", "),L.questions||"","","",""]);});
   var ws2=X.utils.aoa_to_sheet(qa);
   ws2["!cols"]=[{wch:5},{wch:11},{wch:26},{wch:18},{wch:12},{wch:30},{wch:60},{wch:50},{wch:60},{wch:14},{wch:20}];
@@ -1381,10 +1252,10 @@ function buildWorkbook(rows,label){
   function count(f){return rows.filter(f).length;}
   function group(vals){var m={};vals.forEach(function(v){if(v)m[v]=(m[v]||0)+1;});
     return Object.keys(m).sort(function(a,b){return m[b]-m[a];}).map(function(k){return [k,m[k]];});}
-  var sum=[[(settings.brand||"PrompterGo")],["IBC2026 · RAI Amsterdam"],[label],[],
+  var sum=[[(settings.brand||"PROMPTERGO")],["IBC2026 · RAI Amsterdam"],[label],[],
     ["Visitors logged",rows.length],
-    ["To BUSINESS",count(function(L){return L.temp==="hot";})],
-    ["Channel partners",count(function(L){return /Distributor|Dealer|integrator/i.test(L.type||"");})],
+    ["To chase first ",count(function(L){return L.temp==="hot";})],
+    ["Channel partners ",count(function(L){return /Distributor|Dealer|integrator/i.test(L.type||"");})],
     ["Open questions for the engineer ",eng.length],
     ["Cards photographed ",count(function(L){return L.hasCard;})],
     ["Contactable (consent given)",count(function(L){return L.consent!==false&&(L.email||L.phone);})],
@@ -1412,7 +1283,7 @@ function exportExcel(rows,filename,label){
 }
 
 /* --- PDF: text is painted onto pages so Chinese always renders --- */
-var BOLDKEYS=["QUESTIONS FOR YOU","BUSINESS","OTHER VISITORS","Product interest","What they asked about","Countries","Visitor types","需要您回答","重点客户","其他到访","产品兴趣","问题分布","国家","客户类型"];
+var BOLDKEYS=["QUESTIONS FOR YOU","CHASE THESE FIRST","OTHER VISITORS","Product interest","What they asked about","Countries","Visitor types","需要您回答","重点客户","其他到访","产品兴趣","问题分布","国家","客户类型"];
 function isBold(t){for(var i=0;i<BOLDKEYS.length;i++)if(t.indexOf(BOLDKEYS[i])===0||t.indexOf(BOLDKEYS[i])>-1&&t.length<70)return true;return false;}
 function layoutLines(text,ctx,maxW){
   var out=[];
@@ -1451,17 +1322,17 @@ function makePDF(day,text){
     c.fillStyle="#ffffff";c.fillRect(0,0,W,H);
     var y=M;
     if(idx===0){
-      c.fillStyle="#0b181f";c.font="700 "+(22*S)+"px "+FONT;
-      c.fillText(settings.brand||"PrompterGo",M,y+20*S);
-      c.fillStyle="#5e6b70";c.font=(11*S)+"px "+FONT;
+      c.fillStyle="#111111";c.font="700 "+(22*S)+"px "+FONT;
+      c.fillText(settings.brand||"PROMPTERGO",M,y+20*S);
+      c.fillStyle="#6a6a66";c.font=(11*S)+"px "+FONT;
       c.fillText("IBC2026 · RAI Amsterdam · "+fmtDay(day),M,y+40*S);
-      c.strokeStyle="#62ca47";c.lineWidth=3*S;
+      c.strokeStyle="#d81f26";c.lineWidth=2.5*S;
       c.beginPath();c.moveTo(M,y+52*S);c.lineTo(W-M,y+52*S);c.stroke();
       y+=headH;
     }
     pl.forEach(function(L){
       if(L.rule){
-        c.strokeStyle="#dce1dc";c.lineWidth=1*S;
+        c.strokeStyle="#d9d7d1";c.lineWidth=1*S;
         c.beginPath();c.moveTo(M,y-8);c.lineTo(W-M,y-8);c.stroke();
       }else if(L.text){
         c.fillStyle=L.bold?"#111111":"#33332f";
@@ -1471,7 +1342,7 @@ function makePDF(day,text){
       y+=LH;
     });
     c.fillStyle="#9a9892";c.font=(9*S)+"px "+FONT;
-    c.fillText((settings.brand||"PrompterGo")+" — page "+(idx+1)+" of "+pages.length,M,H-M+14*S);
+    c.fillText((settings.brand||"PROMPTERGO")+" — page "+(idx+1)+" of "+pages.length,M,H-M+14*S);
     if(idx)doc.addPage();
     doc.addImage(cv.toDataURL("image/png"),"PNG",0,0,595,842,undefined,"FAST");
   });
@@ -1483,7 +1354,7 @@ function exportPDF(){
   if(!text||text==="—"){toast("Nothing to export yet");return;}
   toast("Building the PDF…");
   loadLib(LIB_PDF,"jspdf").then(function(){
-    try{ offer("PrompterGo-IBC2026-"+day+".pdf",makePDF(day,text)); }
+    try{ offer("PROMPTERGO-IBC2026-"+day+".pdf",makePDF(day,text)); }
     catch(e){ toast("Could not build the PDF — use Copy text instead"); }
   },function(){toast("Could not load the PDF builder — check the connection and try again");});
 }
@@ -1505,16 +1376,16 @@ function fallbackDL(filename,data){
 $("#dlPdf").addEventListener("click",exportPDF);
 $("#dlXlsx").addEventListener("click",function(){
   var day=$("#repDay").value||todayStr();
-  exportExcel(live().filter(function(L){return L.day===day;}),"PrompterGo-IBC2026-"+day+".xlsx",fmtDay(day));
+  exportExcel(live().filter(function(L){return L.day===day;}),"PROMPTERGO-IBC2026-"+day+".xlsx",fmtDay(day));
 });
 $("#dlAll").addEventListener("click",function(){
-  exportExcel(live(),"PrompterGo-IBC2026-all-visitors.xlsx","All four days");
+  exportExcel(live(),"PROMPTERGO-IBC2026-all-visitors.xlsx","All four days");
 });
 $("#dlJson").addEventListener("click",function(){offer("booth-backup.json",JSON.stringify({leads:leads,settings:settings},null,1));});
 
 /* ---------- setup ---------- */
 function fillSetup(){
-  $("#s_brand").value=settings.brand==="PrompterGo · IBC2026"?"":settings.brand;
+  $("#s_brand").value=settings.brand==="PROMPTERGO · IBC2026"?"":settings.brand;
   $("#s_staff").value=settings.staffList.join("\n");
   $("#s_prod").value=settings.products.join("\n");
   $("#s_topic").value=settings.topics.join("\n");
@@ -1534,7 +1405,7 @@ $("#resetLists").addEventListener("click",function(){
   toast("Lists reset");
 });
 $("#saveSet").addEventListener("click",function(){
-  settings.brand=$("#s_brand").value.trim()||"PrompterGo · IBC2026";
+  settings.brand=$("#s_brand").value.trim()||"PROMPTERGO · IBC2026";
   settings.staffList=lines($("#s_staff").value,[]);
   settings.products=lines($("#s_prod").value,DEF_PROD);
   settings.topics=lines($("#s_topic").value,DEF_TOPIC);
@@ -1561,27 +1432,8 @@ function show(t){
 }
 Array.prototype.forEach.call(document.querySelectorAll("nav button"),function(b){b.addEventListener("click",function(){show(b.dataset.tab);});});
 
-/* The header shows settings.brand, which people edit in Setup. Wherever the
-   word PrompterGo appears in it, draw it as the logo: "Go" in brand green.
-   Everything else in the string stays plain text. */
-function paintBrand(){
-  var host=$("#brandname");if(!host)return;
-  var s=settings.brand||"Booth Log";
-  host.textContent="";
-  var i=s.toLowerCase().indexOf("promptergo");
-  if(i<0){host.textContent=s;return;}
-  if(i>0)host.appendChild(document.createTextNode(s.slice(0,i)));
-  var w=el("span","wm");
-  w.appendChild(document.createTextNode("Prompter"));
-  var g=document.createElement("i");g.textContent="Go";
-  w.appendChild(g);
-  host.appendChild(w);
-  var rest=s.slice(i+10);
-  if(rest)host.appendChild(document.createTextNode(rest));
-}
-
 function refresh(){
-  paintBrand();
+  $("#brandname").textContent=settings.brand||"Visitor Log";
   $("#cToday").textContent=live().filter(function(L){return L.day===todayStr();}).length;
   $("#cAll").textContent=live().length;
   $("#cEng").textContent=live().filter(function(L){return L.needEngineer;}).length;
@@ -1596,7 +1448,6 @@ function mergeIn(remote){
   var byId={};leads.forEach(function(L){byId[L.id]=L;});
   var changed=false;
   remote.forEach(function(R){
-    normIncoming(R);
     var cur=byId[R.id];
     if(!cur){leads.push(R);changed=true;}
     else if((R.updated||0)>(cur.updated||0)){if(cur.id!==editingId){Object.assign(cur,R);changed=true;}}
@@ -1645,7 +1496,7 @@ if(window.claude&&window.claude.use){
       var day=$("#repDay").value||todayStr();
       btn.disabled=true;btn.textContent="Writing…";
       $("#repText").textContent="Thinking…";
-      s("You are writing an end-of-day trade show report for the general manager and chief engineer of PrompterGo (Beijing Langwei Jingyan Technology), a teleprompter manufacturer building studio, PTZ, speech, stage and portable prompters in-house since 1995. This is the company's first time exhibiting in Europe; it is at IBC2026 in Amsterdam looking for European distributors, and the chief engineer could not travel. Below is the raw booth log. Write a tight report in Chinese, then the same in English. Structure: 1) a short read on how the day went and what the European market appears to want, including anything that differs from the Chinese market; 2) the questions he must answer tonight, numbered; 3) the leads worth his personal follow-up and why. Be concrete. Invent nothing that is not in the data. No padding.\n\nRAW LOG:\n"+buildReport(day),
+      s("You are writing an end-of-day trade show report for the general manager and chief engineer of PROMPTERGO (Beijing Langwei Jingyan Technology), a teleprompter manufacturer building studio, PTZ, speech, stage and portable prompters in-house since 1995. This is the company's first time exhibiting in Europe; it is at IBC2026 in Amsterdam looking for European distributors, and the chief engineer could not travel. Below is the raw booth log. Write a tight report in Chinese, then the same in English. Structure: 1) a short read on how the day went and what the European market appears to want, including anything that differs from the Chinese market; 2) the questions he must answer tonight, numbered; 3) the leads worth his personal follow-up and why. Be concrete. Invent nothing that is not in the data. No padding.\n\nRAW LOG:\n"+buildReport(day),
         {onText:function(u){$("#repText").textContent=u.text;}})
        .then(function(){btn.disabled=false;btn.textContent="✨ Write it up with Claude";$("#plainRep").classList.remove("hidden");})
        .catch(function(e){
@@ -1658,19 +1509,7 @@ if(window.claude&&window.claude.use){
 }
 
 /* ================= shared Google Sheet ================= */
-var SH_NEED_V=3;                 // must match API_VERSION at the top of Code.gs
-var SHbusy=false, SHtimer=null, SHlast="", SHwarned=false;
-function shCheckVersion(res){
-  if(!res||res.skipped||SHwarned)return;
-  var v=Number(res.v||0);
-  if(v>=SH_NEED_V)return;
-  SHwarned=true;
-  // Editing Code.gs does not publish it. Without a new deployment the server
-  // silently drops the prep list and the tasks never leave the phone.
-  shState("Sheet is running an old script (v"+(v||"?")+", needs v"+SH_NEED_V+
-          "). Prep list will not sync until you redeploy: Deploy \u2192 Manage deployments \u2192 edit \u2192 New version.");
-  toast("Sheet script is out of date — redeploy it");
-}
+var SHbusy=false, SHtimer=null, SHlast="";
 function shOn(){return !!(settings.sheetUrl&&settings.sheetToken);}
 function shState(msg){
   var e=$("#shState");if(!e)return;
@@ -1685,20 +1524,8 @@ function shPost(payload){
   }).then(function(r){return r.json();});
 }
 function shGet(params){
-  params=Object.assign({},params);
-  params._t=Date.now()+"-"+Math.random().toString(36).slice(2,7);
   var q=Object.keys(params).map(function(k){return k+"="+encodeURIComponent(params[k]);}).join("&");
   return fetch(settings.sheetUrl+"?"+q).then(function(r){return r.json();});
-}
-/* Anything coming back from the sheet gets its dates repaired here, once,
-   so no render path ever sees a raw cell value. */
-function normIncoming(R){
-  if(!R)return R;
-  var d=normDay(R.day)||normDay(R.ts);
-  R.day=d;
-  R.ts=normTs(d,R.ts,R.time);
-  R.updated=Number(R.updated||0)||0;
-  return R;
 }
 function stripForWire(L){
   var o={};Object.keys(L).forEach(function(k){if(k!=="dirty"&&k!=="cardPending")o[k]=L[k];});
@@ -1720,11 +1547,9 @@ function shSync(force){
     payload.leads.push(w);
   });
   shState(dirty.length?("Sending "+dirty.length+"…"):"Checking for updates…");
-  var step=(dirty.length||dirtyPrep.length)?shPost(payload):Promise.resolve({ok:true,skipped:true});
+  var step=(dirty.length||dirtyPrep.length)?shPost(payload):Promise.resolve({ok:true});
   return step.then(function(res){
     if(!res||!res.ok)throw new Error((res&&res.error)||"push failed");
-    shCheckVersion(res);
-    if(dirtyPrep.length&&!res.savedPrep)shCheckVersion({v:0});
     (res.saved||[]).forEach(function(sv){
       var L=leads.filter(function(x){return x.id===sv.id;})[0];
       if(!L)return;
@@ -1737,12 +1562,10 @@ function shSync(force){
     return shGet({token:settings.sheetToken,action:"pull",since:settings.lastPull||0});
   }).then(function(res){
     if(!res||!res.ok)throw new Error((res&&res.error)||"pull failed");
-    shCheckVersion(res);
     var added=0,changed=0;
     var byId={};leads.forEach(function(L){byId[L.id]=L;});
     (res.leads||[]).forEach(function(R){
       if(!R||!R.id)return;
-      normIncoming(R);
       var cur=byId[R.id];
       if(!cur){R.dirty=0;leads.push(R);byId[R.id]=R;added++;return;}
       if(cur.dirty||cur.id===editingId)return;
@@ -1755,12 +1578,7 @@ function shSync(force){
       var cur=pById[R.id];
       if(!cur){R.dirty=0;prep.push(R);pById[R.id]=R;pTouched=true;return;}
       if(cur.dirty)return;
-      if((R.updated||0)>(cur.updated||0)){
-        var born=cur.created||R.created;      // the sheet has no Created column;
-        Object.assign(cur,R);                 // without this the list reorders
-        cur.created=born;                     // every time someone ticks a box
-        cur.dirty=0;pTouched=true;
-      }
+      if((R.updated||0)>(cur.updated||0)){Object.assign(cur,R);cur.dirty=0;pTouched=true;}
     });
     settings.lastPull=res.serverTime||settings.lastPull;
     writeJSON(LS_S,settings);writeJSON(LS_L,leads);writeJSON(LS_PR,prep);
@@ -1787,8 +1605,8 @@ function shStart(){
   SHtimer=setInterval(function(){shSync();},15000);
 }
 $("#shNow").addEventListener("click",function(){
-  settings.sheetUrl=$("#s_shurl").value.trim()||settings.sheetUrl||SHEET_URL_DEFAULT;
-  settings.sheetToken=$("#s_shtok").value.trim()||settings.sheetToken||SHEET_TOKEN_DEFAULT;
+  settings.sheetUrl=$("#s_shurl").value.trim()||SHEET_URL_DEFAULT;
+  settings.sheetToken=$("#s_shtok").value.trim()||SHEET_TOKEN_DEFAULT;
   if(!shOn()){toast("Fill in the URL and token first");return;}
   settings.lastPull=0;                       // forget the cursor: re-read the whole sheet
   writeJSON(LS_S,settings);
@@ -1798,18 +1616,12 @@ $("#shNow").addEventListener("click",function(){
   shStart();toast("Full resync — pushing and re-reading everything");
 });
 $("#shTest").addEventListener("click",function(){
-  var u=$("#s_shurl").value.trim()||settings.sheetUrl, t=$("#s_shtok").value.trim()||settings.sheetToken;
+  var u=$("#s_shurl").value.trim(), t=$("#s_shtok").value.trim();
   if(!u||!t){toast("Fill in both fields");return;}
   settings.sheetUrl=u;settings.sheetToken=t;writeJSON(LS_S,settings);
   shState("Testing…");
   shGet({token:t,action:"ping"}).then(function(r){
-    if(r&&r.ok){
-      var v=Number(r.v||0);
-      shState("Connected ✓ — sheet reachable, script v"+(v||"?")+
-              (v<SH_NEED_V?(" — OUT OF DATE, needs v"+SH_NEED_V+". Redeploy: Deploy → Manage deployments → edit → New version."):" ✓"));
-      toast(v<SH_NEED_V?"Connected, but the script is out of date":"Connected");
-      shStart();
-    }
+    if(r&&r.ok){shState("Connected ✓ — sheet reachable");toast("Connected");shStart();}
     else {shState("Rejected: "+((r&&r.error)||"unknown")+". Check the token matches the script.");toast("Token rejected");}
   }).catch(function(){
     shState("No answer. Check the URL ends in /exec and the deployment is set to Anyone.");

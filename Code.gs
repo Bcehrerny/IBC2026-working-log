@@ -1,16 +1,11 @@
 /**
- * PrompterGo Booth Log — shared store
+ * PROMPTERGO Booth Log — shared store
  * Paste this into Extensions → Apps Script inside your Google Sheet.
  *
  * BEFORE YOU DEPLOY: change TOKEN below to your own phrase. The same phrase
  * goes into the app on every phone. Anyone with the URL and the token can
  * read and write, so make it long and don't post it publicly.
  */
-
-/* Bump this whenever this file changes, and redeploy. The app compares it and
-   warns if the phones are talking to an older deployment — editing Code.gs does
-   NOT put it live, which is the usual reason the prep list stops syncing. */
-var API_VERSION = 3;
 
 var TOKEN  = "prompt-ibc26-CHANGE-THIS";
 var SHEET  = "Visitors";
@@ -62,7 +57,7 @@ function setup() {
 
   var d = ss.getSheetByName("Dashboard") || ss.insertSheet("Dashboard");
   d.clear();
-  d.getRange("A1").setValue("PrompterGo — IBC2026").setFontSize(16).setFontWeight("bold");
+  d.getRange("A1").setValue("PROMPTERGO — IBC2026").setFontSize(16).setFontWeight("bold");
   d.getRange("A2").setFormula('="Updated "&TEXT(NOW(),"ddd d mmm HH:mm")');
   var rows = [
     ["Visitors so far",        '=COUNTIFS(Visitors!A2:A,"<>",Visitors!X2:X,"<>YES")'],
@@ -111,7 +106,7 @@ function upgrade() {
 function doGet(e) {
   var p = e.parameter || {};
   if (p.token !== TOKEN) return out({ ok: false, error: "bad token" });
-  if (p.action === "ping") return out({ ok: true, v: API_VERSION, serverTime: Date.now() });
+  if (p.action === "ping") return out({ ok: true, serverTime: Date.now() });
 
   var since = Number(p.since || 0);
   var vals  = sheet().getDataRange().getValues();
@@ -131,7 +126,7 @@ function doGet(e) {
     var pt = Number(pv[j][PHEAD.length - 1] || pv[j][PHEAD.length - 2] || 0);
     if (pt > since) ptasks.push(prepFromRow(pv[j]));
   }
-  return out({ ok: true, v: API_VERSION, leads: rows, prep: ptasks, serverTime: Date.now() });
+  return out({ ok: true, leads: rows, prep: ptasks, serverTime: Date.now() });
 }
 
 function doPost(e) {
@@ -171,7 +166,7 @@ function doPost(e) {
         savedPrep.push(t.id);
       });
     }
-    return out({ ok: true, v: API_VERSION, saved: saved, savedPrep: savedPrep, serverTime: Date.now() });
+    return out({ ok: true, saved: saved, savedPrep: savedPrep, serverTime: Date.now() });
   } catch (err) {
     return out({ ok: false, error: String(err) });
   } finally {
@@ -206,7 +201,7 @@ function prepFromRow(r) {
     done: String(r[4]).toUpperCase() === "YES" ? 1 : 0,
     doneBy: r[5], by: r[6],
     deleted: String(r[7]).toUpperCase() === "YES" ? 1 : 0,
-    created: Number(r[8] || 0), updated: Number(r[8] || 0), _v: API_VERSION
+    created: Number(r[8] || 0), updated: Number(r[8] || 0)
   };
 }
 function folder() {
@@ -237,38 +232,16 @@ function parseNotes(v) {
 function join(v) { return Array.isArray(v) ? v.join(", ") : (v || ""); }
 function split(v) { return String(v || "").split(",").map(function (x) { return x.trim(); }).filter(Boolean); }
 
-/**
- * A cell that Sheets decided was a date comes back as a JS Date, and
- * JSON.stringify turns it into "2026-09-10T22:00:00.000Z" — shifted by the
- * script's timezone and useless to the phones, which expect "2026-09-10".
- * Every value that leaves this script goes through these two.
- */
-var TZ = Session.getScriptTimeZone() || "Europe/Amsterdam";
-function dayStr(v) {
-  if (v instanceof Date) return Utilities.formatDate(v, TZ, "yyyy-MM-dd");
-  var s = String(v == null ? "" : v).trim();
-  var m = s.match(/^(\d{4})-(\d{2})-(\d{2})/);
-  return m ? m[1] + "-" + m[2] + "-" + m[3] : "";
-}
-function hhmmStr(v) {
-  if (v instanceof Date) return Utilities.formatDate(v, TZ, "HH:mm");
-  var m = String(v == null ? "" : v).match(/(\d{1,2}):(\d{2})/);
-  return m ? ("0" + m[1]).slice(-2) + ":" + m[2] : "";
-}
-
 function toRow(L, cardUrl) {
-  return [L.id, dayStr(L.day), L.time || timeOf(L.ts), L.name || "", L.company || "", L.country || "",
+  return [L.id, L.day || "", L.time || timeOf(L.ts), L.name || "", L.company || "", L.country || "",
     L.role || "", L.email || "", L.phone || "", L.type || "", join(L.products), join(L.topics),
     notesText(L), L.questions || "", L.needEngineer ? "YES" : "", L.engQuestion || "",
     L.temp || "", L.next || "", L.consent === false ? "NO" : "yes", cardUrl, L.badgeId || "",
     L.staff || "", L.deleted ? "YES" : "", Number(L.updated || Date.now()), 0];
 }
 function fromRow(r) {
-  var day = dayStr(r[1]), hhmm = hhmmStr(r[2]);
   return {
-    id: r[0], day: day, time: hhmm,
-    ts: day ? (day + "T" + (hhmm || "00:00") + ":00") : "",
-    name: r[3], company: r[4],
+    id: r[0], day: r[1], ts: r[1] + "T" + (r[2] || "00:00") + ":00", name: r[3], company: r[4],
     country: r[5], role: r[6], email: r[7], phone: r[8], type: r[9], types: split(r[9]),
     products: split(r[10]), topics: split(r[11]), productNotes: parseNotes(r[12]),
     questions: r[13], needEngineer: String(r[14]).toUpperCase() === "YES",
@@ -278,37 +251,8 @@ function fromRow(r) {
     deleted: String(r[22]).toUpperCase() === "YES" ? 1 : 0, updated: Number(r[23] || 0)
   };
 }
-/**
- * The phone already wrote the wall-clock time it saw into ts; re-parsing that
- * through the script's timezone shifted it by an hour or two, which is why the
- * sheet and the phones disagreed. Take the digits as they stand.
- */
 function timeOf(ts) {
-  return hhmmStr(ts);
-}
-
-/**
- * Run this once from the editor if the phones are showing "Invalid Date".
- * It forces the Date and Time columns to plain text and rewrites any cell
- * Sheets had silently turned into a real date. Nothing else is touched.
- */
-function repairDates() {
-  var sh = sheet();
-  var n = sh.getLastRow() - 1;
-  sh.getRange("B:C").setNumberFormat("@");
-  if (n > 0) {
-    var rng = sh.getRange(2, 2, n, 2);
-    var v = rng.getValues();
-    var out = [], fixed = 0;
-    for (var i = 0; i < n; i++) {
-      var d = dayStr(v[i][0]), t = hhmmStr(v[i][1]);
-      if (d !== String(v[i][0]) || t !== String(v[i][1])) fixed++;
-      out.push([d, t]);
-    }
-    rng.setValues(out);
-    SpreadsheetApp.getUi().alert("Checked " + n + " rows, rewrote " + fixed +
-      ".\n\nNow: Deploy \u2192 Manage deployments \u2192 edit \u2192 Version: New version.");
-  } else {
-    SpreadsheetApp.getUi().alert("No rows yet. Columns B and C are now plain text.");
-  }
+  if (!ts) return "";
+  var d = new Date(ts);
+  return isNaN(d) ? "" : Utilities.formatDate(d, Session.getScriptTimeZone(), "HH:mm");
 }
