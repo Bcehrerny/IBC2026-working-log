@@ -9,7 +9,7 @@
 <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
 <meta name="robots" content="noindex, nofollow, noarchive">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Booth Log">
+<meta name="apple-mobile-web-app-title" content="Visitor Log">
 <link rel="apple-touch-icon" href="./icon-180.png">
 <link rel="icon" href="./icon-192.png">
 <style>
@@ -107,6 +107,16 @@ input:focus,textarea:focus,select:focus{outline:2px solid var(--tally);outline-o
 #scanVid{width:100%;display:block;max-height:56vh;object-fit:cover}
 #scanBox .hint{position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,.62);color:#fff;font-size:13px;padding:9px 12px;text-align:center}
 #scanBox .frame{position:absolute;left:12%;right:12%;top:20%;bottom:20%;border:2px solid rgba(255,255,255,.85);border-radius:10px}
+/* after an IBC badge scan: name + company come from the badge, only contact fields stay open */
+#badgeCard{display:none;align-items:center;gap:12px;border-left:3px solid var(--go);background:var(--panel-2);border-radius:0 9px 9px 0;padding:12px 13px;margin:0 0 13px}
+#captureCard.badge-mode #badgeCard{display:flex}
+#captureCard.badge-mode .nobadge{display:none !important}
+#badgeCard .bc-main{flex:1;min-width:0}
+#badgeCard .bc-name{font-size:18px;font-weight:650;line-height:1.2;word-break:break-word}
+#badgeCard .bc-co{font-size:15px;color:var(--ink-2);margin-top:2px;word-break:break-word}
+#badgeCard .bc-id{font-size:12px;color:var(--ink-3);margin-top:4px}
+#badgeCard .btn{padding:8px 12px;font-size:13px;flex:none}
+#captureCard{scroll-margin-top:104px}
 .lead{border-bottom:1px solid var(--line);padding:12px 0;cursor:pointer}
 .lead:last-child{border-bottom:0}
 .lead h3{margin:0;font-size:15.5px;font-weight:650;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
@@ -207,20 +217,29 @@ pre.rep{white-space:pre-wrap;word-break:break-word;background:var(--field);borde
     </div>
     <p class="tiny hidden" id="badgeNote" style="margin:-4px 0 12px"></p>
 
-    <div class="two">
+    <div id="badgeCard" aria-live="polite">
+      <div class="bc-main">
+        <div class="bc-name" id="bcName"></div>
+        <div class="bc-co" id="bcCompany"></div>
+        <div class="bc-id" id="bcId"></div>
+      </div>
+      <button type="button" class="btn" id="badgeEdit">Edit details</button>
+    </div>
+
+    <div class="two nobadge">
       <div class="f"><label for="f_name">Name </label><input type="text" id="f_name" autocomplete="off"></div>
       <div class="f"><label for="f_company">Company </label><input type="text" id="f_company" autocomplete="off"></div>
     </div>
-    <div class="two">
+    <div class="two nobadge">
       <div class="f"><label for="f_country">Country </label><input type="text" id="f_country" autocomplete="off"></div>
       <div class="f"><label for="f_role">Job title </label><input type="text" id="f_role" autocomplete="off"></div>
     </div>
     <div class="two">
       <div class="f"><label for="f_email">Email</label><input type="email" id="f_email" autocomplete="off" autocapitalize="off"></div>
-      <div class="f"><label for="f_phone">Phone / WhatsApp / WeChat</label><input type="tel" id="f_phone" autocomplete="off"></div>
+      <div class="f"><label for="f_phone" id="l_phone">Phone / WhatsApp / WeChat</label><input type="tel" id="f_phone" autocomplete="off"></div>
     </div>
 
-    <div class="f">
+    <div class="f nobadge">
       <label>Customer Type</label>
       <div class="chips" id="c_type"></div>
       <input type="text" id="f_typeOther" class="hidden" placeholder="Which kind exactly?" style="margin-top:9px">
@@ -376,7 +395,7 @@ pre.rep{white-space:pre-wrap;word-break:break-word;background:var(--field);borde
 (function(){
 "use strict";
 
-var LS_L='boothlog_leads_v1', LS_S='boothlog_set_v1', LS_P='boothlog_photo_', LS_PR='boothlog_prep_v1';
+var LS_L='boothlog_leads_v1', LS_S='log_set_v1', LS_P='boothlog_photo_', LS_PR='boothlog_prep_v1';
 var db=null, sampleFn=null, canSeeImages=false;
 
 /* Bump this whenever DEF_PROD / DEF_TOPIC / DEF_TYPE change below. Every phone
@@ -670,8 +689,63 @@ function stopScan(){
 }
 
 var pendingBadge="";
+var PHONE_LABEL=$("#l_phone").textContent;
+
+/* IBC2026 badge QR, e.g.
+   https://ibc.org/home?IBC26-JY9MPD3BWN::IBC2026::STX::Berry::Chen::PROMPTERGO::
+   fields: badge ID :: event :: badge type :: first name :: last name :: company */
+function parseIbcBadge(raw){
+  var s=String(raw||"").trim();
+  if(s.indexOf("::")<0)return null;
+  var payload=s.indexOf("?")>-1?s.slice(s.indexOf("?")+1):s;
+  payload=payload.split("#")[0];
+  var parts=payload.split("::").map(function(p){
+    try{return decodeURIComponent(p).trim();}catch(e){return p.trim();}
+  });
+  if(parts.length<6||!parts[0])return null;
+  var name=[parts[3],parts[4]].filter(Boolean).join(" ");
+  if(!name&&!parts[5])return null;
+  return {badgeId:parts[0],event:parts[1],badgeType:parts[2],name:name,company:parts[5]||""};
+}
+
+function setBadgeMode(on){
+  $("#captureCard").classList.toggle("badge-mode",!!on);
+  $("#l_phone").textContent=on?"WhatsApp":PHONE_LABEL;
+}
+$("#badgeEdit").addEventListener("click",function(){
+  setBadgeMode(false);
+  $("#f_name").focus();
+});
+
+function applyIbcBadge(b){
+  $("#f_name").value=b.name;
+  $("#f_company").value=b.company;
+  pendingBadge=b.badgeId;
+  $("#badgeNote").classList.add("hidden");$("#badgeNote").textContent="";
+  $("#bcName").textContent=b.name||"No name on badge";
+  $("#bcCompany").textContent=b.company;
+  $("#bcCompany").classList.toggle("hidden",!b.company);
+  $("#bcId").textContent="Badge "+b.badgeId;
+  if(editingId){
+    /* finishing an older record: fill it in, but keep every field visible */
+    var n=$("#badgeNote");
+    n.textContent="Badge read — name and company updated. Check it is right.";
+    n.classList.remove("hidden");
+  }else{
+    setBadgeMode(true);
+  }
+  toast("Badge read ✓");
+  setTimeout(function(){
+    var e=$("#f_email");
+    if(!e.value.trim())e.focus({preventScroll:true});
+    $("#captureCard").scrollIntoView({block:"start",behavior:"smooth"});
+  },60);
+}
+
 function gotBadge(text){
   stopScan();
+  var ibc=parseIbcBadge(text);
+  if(ibc){applyIbcBadge(ibc);return;}
   var p=parseBadge(text);
   var filled=[];
   [["name","f_name"],["company","f_company"],["role","f_role"],["email","f_email"],["phone","f_phone"],["country","f_country"]].forEach(function(m){
@@ -820,14 +894,14 @@ function typeArray(){
 function typeValue(){return typeArray().join(" · ");}
 $("#saveBtn").addEventListener("click",function(){
   var name=$("#f_name").value.trim(), company=$("#f_company").value.trim();
-  if(!name){toast("A name is required 姓名必填");$("#f_name").focus();return;}
+  if(!name){setBadgeMode(false);toast("A name is required 姓名必填");$("#f_name").focus();return;}
   if(!$("#f_email").value.trim()&&!$("#f_phone").value.trim()){
-    toast("Add an email or a phone number 邮箱或电话至少填一个");$("#f_email").focus();return;
+    toast($("#captureCard").classList.contains("badge-mode")?"Add an email or WhatsApp 邮箱或WhatsApp至少填一个":"Add an email or a phone number 邮箱或电话至少填一个");$("#f_email").focus();return;
   }
   if($("#f_eng").checked&&!$("#f_engQ").value.trim()&&!$("#f_q").value.trim()){
     toast("Write down the question you could not answer");$("#f_engQ").focus();return;
   }
-  if(chipVals($("#c_type")).some(function(t){return /^Other$/i.test(t);})&&!$("#f_typeOther").value.trim()){
+  if(!$("#captureCard").classList.contains("badge-mode")&&chipVals($("#c_type")).some(function(t){return /^Other$/i.test(t);})&&!$("#f_typeOther").value.trim()){
     toast("Say what kind of company 请写明具体类型");$("#f_typeOther").focus();return;
   }
   var body={
@@ -866,6 +940,7 @@ $("#saveBtn").addEventListener("click",function(){
 });
 $("#cancelEdit").addEventListener("click",function(){resetForm();show("leads");});
 
+var CAP_TITLE=$("#capTitle").textContent, SAVE_LABEL=$("#saveBtn").textContent;
 function resetForm(){
   editingId=null;pendingBadge="";
   ["f_name","f_company","f_country","f_role","f_email","f_phone","f_q","f_next"].forEach(function(i){$("#"+i).value="";});
@@ -877,9 +952,11 @@ function resetForm(){
   if(settings.staffList.length===1)setChips($("#c_staff"),[settings.staffList[0]]);else clearChips($("#c_staff"));
   clearCard();stopScan();
   $("#badgeNote").classList.add("hidden");$("#badgeNote").textContent="";
-  $("#capTitle").innerHTML='Who came by <span class="cn">来访客户</span>';
-  $("#capSub").textContent="Grab their details in five seconds, then fill the rest in after they walk away.";
-  $("#saveBtn").textContent="Save visitor 保存";
+  setBadgeMode(false);
+  $("#bcName").textContent="";$("#bcCompany").textContent="";$("#bcId").textContent="";
+  $("#capTitle").textContent=CAP_TITLE;
+  if($("#capSub"))$("#capSub").textContent="Grab their details in five seconds, then fill the rest in after they walk away.";
+  $("#saveBtn").textContent=SAVE_LABEL;
   $("#cancelEdit").classList.add("hidden");
   $("#captureCard").classList.remove("edit");
 }
@@ -905,7 +982,7 @@ $("#f_consent").checked=L.consent!==false;
   });
   setChips($("#c_temp"),[L.temp||"warm"]);setChips($("#c_staff"),[L.staff]);
   $("#capTitle").textContent="Finishing off "+(L.name||L.company||"this record");
-  $("#capSub").textContent="Saved "+fmtDay(L.day)+" at "+fmtTime(L.ts)+". Add whatever you didn't have time for.";
+  if($("#capSub"))$("#capSub").textContent="Saved "+fmtDay(L.day)+" at "+fmtTime(L.ts)+". Add whatever you didn't have time for.";
   $("#saveBtn").textContent="Update 更新";
   $("#cancelEdit").classList.remove("hidden");
   $("#captureCard").classList.add("edit");
@@ -1386,7 +1463,7 @@ $("#dlJson").addEventListener("click",function(){offer("booth-backup.json",JSON.
 /* ---------- setup ---------- */
 function fillSetup(){
   $("#s_brand").value=settings.brand==="PROMPTERGO · IBC2026"?"":settings.brand;
-  $("#s_staff").value=settings.staffList.join("\n");
+  if($("#s_staff"))$("#s_staff").value=settings.staffList.join("\n");
   $("#s_prod").value=settings.products.join("\n");
   $("#s_topic").value=settings.topics.join("\n");
   $("#s_type").value=settings.types.join("\n");
@@ -1406,7 +1483,7 @@ $("#resetLists").addEventListener("click",function(){
 });
 $("#saveSet").addEventListener("click",function(){
   settings.brand=$("#s_brand").value.trim()||"PROMPTERGO · IBC2026";
-  settings.staffList=lines($("#s_staff").value,[]);
+  if($("#s_staff"))settings.staffList=lines($("#s_staff").value,[]);
   settings.products=lines($("#s_prod").value,DEF_PROD);
   settings.topics=lines($("#s_topic").value,DEF_TOPIC);
   settings.types=lines($("#s_type").value,DEF_TYPE);
